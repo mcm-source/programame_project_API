@@ -10,7 +10,7 @@ public class Teacher {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private  long id;
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     private  String email;
     @Column(nullable = false)
     private String name;

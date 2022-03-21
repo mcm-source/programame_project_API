@@ -22,6 +22,10 @@ public class ComplexDonation {
     @OneToOne(  mappedBy = "complexDonation", fetch = FetchType.LAZY)
     private Sponsor sponsor;
 
+
+    public ComplexDonation() {
+    }
+
     public ComplexDonation(float amountForSimpleProblem,
                            float amountForMediumProblem,
                            float amountForHardProblem) {

@@ -18,8 +18,13 @@ public class SimpleDonation {
     @OneToOne(  mappedBy = "simpleDonation", fetch = FetchType.LAZY)
     private Sponsor sponsor;
 
+    public SimpleDonation() {
+    }
+
     public SimpleDonation(float amount, Sponsor sponsor) {
         this.amount = amount;
         this.sponsor = sponsor;
     }
+
+
 }
