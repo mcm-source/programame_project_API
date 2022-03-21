@@ -46,7 +46,7 @@ public class TeamService {
 
         try {
 
-            int idTeam = (int) teamData.get("idTeam");
+            int idTeam = (Integer) teamData.get("idTeam");
 
             if (teamRepository.existsById(idTeam)) {
                 teamRepository.update(idTeam, teamData);
@@ -83,6 +83,13 @@ public class TeamService {
     }
 
 
+
+
+
+
+
+
+
     private Team createTeam(Map<String, Object> teamData, Teacher teacher) {
 
         return new Team((String) teamData.get("name"),
@@ -92,6 +99,8 @@ public class TeamService {
                 teacher
         );
     }
+
+
 
 
     private ResponseEntity createResponseEntity(HttpStatus status, String bodyMessage) {

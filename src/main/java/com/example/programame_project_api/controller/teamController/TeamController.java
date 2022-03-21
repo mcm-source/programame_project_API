@@ -5,10 +5,7 @@ import com.example.programame_project_api.entities.Team;
 import com.example.programame_project_api.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -20,11 +17,30 @@ public class TeamController {
     private TeamService teamService;
 
     @PostMapping("/createTeam")
-    public ResponseEntity<IssueReport> newClient(@RequestBody Map<String, Object> teamData) {
+    public ResponseEntity<IssueReport> newTeam(@RequestBody Map<String, Object> teamData) {
 
         return  teamService.saveTeam(teamData);
 
 
     }
+
+    @PostMapping("/updateTeam")
+    public ResponseEntity updateTeam(@RequestBody Map<String, Object> teamData) {
+
+        return teamService.updateTeam(teamData);
+
+
+    }
+
+    @DeleteMapping("/deleteTeam/{id}")
+    public ResponseEntity deleteClient(@PathVariable("dni") int id) {
+
+        return teamService.deleteTeam(id);
+
+    }
+
+
+
+
 
 }

@@ -21,10 +21,28 @@ public class SimpleDonation {
     public SimpleDonation() {
     }
 
-    public SimpleDonation(float amount, Sponsor sponsor) {
+    public SimpleDonation(float amount) {
         this.amount = amount;
-        this.sponsor = sponsor;
+
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
+
+    public Sponsor getSponsor() {
+        return sponsor;
+    }
+
+    public void setSponsor(Sponsor sponsor) {
+        this.sponsor = sponsor;
+    }
 }

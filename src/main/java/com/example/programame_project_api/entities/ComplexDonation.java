@@ -33,4 +33,42 @@ public class ComplexDonation {
         this.amountForMediumProblem = amountForMediumProblem;
         this.amountForHardProblem = amountForHardProblem;
     }
+
+
+    public long getId() {
+        return id;
+    }
+
+
+    public float getAmountForSimpleProblem() {
+        return amountForSimpleProblem;
+    }
+
+    public void setAmountForSimpleProblem(float amountForSimpleProblem) {
+        this.amountForSimpleProblem = amountForSimpleProblem;
+    }
+
+    public float getAmountForMediumProblem() {
+        return amountForMediumProblem;
+    }
+
+    public void setAmountForMediumProblem(float amountForMediumProblem) {
+        this.amountForMediumProblem = amountForMediumProblem;
+    }
+
+    public float getAmountForHardProblem() {
+        return amountForHardProblem;
+    }
+
+    public void setAmountForHardProblem(float amountForHardProblem) {
+        this.amountForHardProblem = amountForHardProblem;
+    }
+
+    public Sponsor getSponsor() {
+        return sponsor;
+    }
+
+    public void setSponsor(Sponsor sponsor) {
+        this.sponsor = sponsor;
+    }
 }
