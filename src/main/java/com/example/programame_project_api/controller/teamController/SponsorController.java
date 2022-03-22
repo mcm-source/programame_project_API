@@ -41,4 +41,16 @@ public class SponsorController {
         return sponsorService.deleteSponsor(id, token);
 
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }

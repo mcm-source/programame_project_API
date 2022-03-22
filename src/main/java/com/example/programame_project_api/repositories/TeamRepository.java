@@ -3,6 +3,7 @@ package com.example.programame_project_api.repositories;
 import com.example.programame_project_api.entities.Team;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Map;
 
 public interface TeamRepository  extends CrudRepository<Team, Long> {
@@ -11,6 +12,9 @@ public interface TeamRepository  extends CrudRepository<Team, Long> {
     boolean existsById(long id);
     Team findById(long id);
     Team findByName(String name);
+    List<Team> findAll();
+
+
 
     public default void update(long idTeam, Map<String, Object> teamData) {
 

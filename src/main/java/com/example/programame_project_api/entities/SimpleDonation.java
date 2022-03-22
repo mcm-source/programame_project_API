@@ -1,6 +1,10 @@
 package com.example.programame_project_api.entities;
 
+import com.example.programame_project_api.ProgramameProjectApiApplication;
+
 import javax.persistence.*;
+
+import static com.example.programame_project_api.ProgramameProjectApiApplication.*;
 
 
 @Entity
@@ -13,6 +17,12 @@ public class SimpleDonation {
 
     @Column(nullable = false)
     private double amount;
+
+    @Transient
+    private double totalAcount;
+
+
+
 
 
     @OneToOne(  mappedBy = "simpleDonation", fetch = FetchType.LAZY)
@@ -44,5 +54,24 @@ public class SimpleDonation {
 
     public void setSponsor(Sponsor sponsor) {
         this.sponsor = sponsor;
+    }
+
+    public Double calculateAmount (){
+
+        int numberTotalProblems = NUMBEROFSIMPLEPROBLEM+NUMBEROFMEDIUMPROBLEM+NUMBEROFHARDPROBLEM;
+
+        return (numberTotalProblems*amount);
+
+
+
+
+    }
+
+    public double getTotalAcount() {
+        return totalAcount;
+    }
+
+    public void setTotalAcount(double totalAcount) {
+        this.totalAcount = totalAcount;
     }
 }

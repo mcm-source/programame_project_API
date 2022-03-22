@@ -15,10 +15,18 @@ public class TeacherController {
     @Autowired
     private TeacherService teacherService;
 
-    @GetMapping("/listDataFromTeacher")
+    @GetMapping("/listDataForTeamsTable")
     public ResponseEntity listTeamsAndSponsorFromTeacher(@RequestHeader(name="Authorization") String token) {
 
         return  teacherService.listDataFromTeacher(token);
+
+    }
+
+
+    @GetMapping("/listDataForOverallTable")
+    public ResponseEntity listDataForOverallTable() {
+
+        return  teacherService.listDataForOVerallTable();
 
     }
 

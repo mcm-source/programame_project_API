@@ -5,11 +5,14 @@ import com.example.programame_project_api.entities.SimpleDonation;
 import com.example.programame_project_api.entities.Sponsor;
 import org.springframework.data.repository.CrudRepository;
 
+import java.util.List;
 import java.util.Map;
 
 public interface SponsorRepository extends CrudRepository<Sponsor, Long> {
 
     Sponsor findById(long id);
+
+    List<Sponsor> findAll();
 
 
     public default void updateSponsor(Sponsor sponsor, Map<String, Object> data) {

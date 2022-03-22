@@ -13,6 +13,8 @@ public class Sponsor {
     @Column(nullable = false)
     private String name;
 
+
+
     @ManyToOne
     private Team team;
 
