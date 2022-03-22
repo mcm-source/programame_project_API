@@ -54,13 +54,14 @@ public class TeacherService {
             List<ContainerOverallTable> containerOverallTable = new ArrayList<>();
 
             for (Sponsor sponsor : listSponsor) {
-
                 if (sponsor.getSimpleDonation() != null) {
                     containerOverallTable.add(doContainerDataForSimpleDonation(sponsor));
                 } else if (sponsor.getComplexDonation() != null) {
                     containerOverallTable.add(doContainerDataForComplexDonation(sponsor));
                 }
             }
+
+
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(containerOverallTable);
@@ -77,14 +78,14 @@ public class TeacherService {
 
         SimpleDonation simpleDonation = sponsor.getSimpleDonation();
         simpleDonation.setSponsor(null);
-        double totalAcount = simpleDonation.calculateAmount();
+        simpleDonation.setTotalAcount(simpleDonation.calculateAmount());
+
 
         return new ContainerOverallTable(
                 sponsor.getTeam().getName(),
                 sponsor.getTeam().getSchoolName(),
                 sponsor.getName(),
-                simpleDonation,
-                totalAcount);
+                simpleDonation);
 
 
     }
@@ -94,14 +95,14 @@ public class TeacherService {
 
         ComplexDonation complexDonation = sponsor.getComplexDonation();
         complexDonation.setSponsor(null);
-        double totalAcount = complexDonation.calculateAmount();
+        complexDonation.setTotalAcount(complexDonation.calculateAmount());
+
 
         return new ContainerOverallTable(
                 sponsor.getTeam().getName(),
                 sponsor.getTeam().getSchoolName(),
                 sponsor.getName(),
-                complexDonation,
-                totalAcount);
+                complexDonation);
 
 
     }
@@ -109,7 +110,6 @@ public class TeacherService {
 
     private List prepareDataForResponse(List<Team> listData) {
 
-        double subtotalAcount = 0;
 
         listData.forEach(team -> {
             team.setTeacher(null);

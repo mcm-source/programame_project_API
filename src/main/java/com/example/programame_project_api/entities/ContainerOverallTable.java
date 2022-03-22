@@ -2,7 +2,7 @@ package com.example.programame_project_api.entities;
 
 import org.springframework.stereotype.Component;
 
-
+@Component
 public class ContainerOverallTable {
 
 
@@ -11,29 +11,52 @@ public class ContainerOverallTable {
     private  String sponsorName;
     private  SimpleDonation simpleDonation;
     private  ComplexDonation complexDonation;
-    private  double totalAcount;
+
+
+    public ContainerOverallTable() {
+    }
 
     public ContainerOverallTable(String teamName,
                                  String schoolName,
                                  String sponsorName,
-                                 SimpleDonation simpleDonation,
-                                 double totalAcount) {
+                                 SimpleDonation simpleDonation) {
         this.teamName = teamName;
         this.schoolName = schoolName;
         this.sponsorName = sponsorName;
         this.simpleDonation = simpleDonation;
-        this.totalAcount = totalAcount;
+
     }
 
     public ContainerOverallTable(String teamName,
                                  String schoolName,
                                  String sponsorName,
-                                 ComplexDonation complexDonation,
-                                 double totalAcount) {
+                                 ComplexDonation complexDonation) {
         this.teamName = teamName;
         this.schoolName = schoolName;
         this.sponsorName = sponsorName;
         this.complexDonation = complexDonation;
-        this.totalAcount = totalAcount;
+
     }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    public String getSponsorName() {
+        return sponsorName;
+    }
+
+    public SimpleDonation getSimpleDonation() {
+        return simpleDonation;
+    }
+
+    public ComplexDonation getComplexDonation() {
+        return complexDonation;
+    }
+
+
 }
