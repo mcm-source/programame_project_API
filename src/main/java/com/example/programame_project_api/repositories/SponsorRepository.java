@@ -21,9 +21,9 @@ public interface SponsorRepository extends CrudRepository<Sponsor, Long> {
         } else {
             sponsor.setName((String) data.get("name"));
             sponsor.setComplexDonation(new ComplexDonation(
-                    (Float) data.get("amountForSimpleProblem"),
-                    (Float) data.get("amountForMediumProblem"),
-                    (Float) data.get("amountForHardProblem")
+                    (double) data.get("amountForSimpleProblem"),
+                    (double) data.get("amountForMediumProblem"),
+                    (double) data.get("amountForHardProblem")
             ));
             save(sponsor);
         }

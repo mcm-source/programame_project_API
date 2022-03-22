@@ -27,13 +27,16 @@ public class Sponsor {
     public Sponsor() {
     }
 
-    public Sponsor(String name, SimpleDonation simpleDonation) {
+    public Sponsor(String name, Team team, SimpleDonation simpleDonation) {
         this.name = name;
+        this.team = team;
         this.simpleDonation = simpleDonation;
+
     }
 
-    public Sponsor(String name,  ComplexDonation complexDonation) {
+    public Sponsor(String name, Team team, ComplexDonation complexDonation) {
         this.name = name;
+        this.team = team;
         this.complexDonation = complexDonation;
     }
 

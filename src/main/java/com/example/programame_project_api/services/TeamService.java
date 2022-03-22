@@ -29,8 +29,6 @@ public class TeamService {
 
         try {
 
-
-          //  Teacher teacher = teacherRepository.findByEmail((String) teamData.get("email"));
             Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
 
             if (teacher != null) {
@@ -93,12 +91,6 @@ public class TeamService {
 
 
     }
-
-
-
-
-
-
 
 
 

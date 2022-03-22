@@ -11,13 +11,13 @@ public class ComplexDonation {
     private  long id;
 
     @Column(nullable = false)
-    private float amountForSimpleProblem;
+    private double amountForSimpleProblem;
 
     @Column(nullable = false)
-    private float amountForMediumProblem;
+    private double amountForMediumProblem;
 
     @Column(nullable = false)
-    private float amountForHardProblem;
+    private double amountForHardProblem;
 
     @OneToOne(  mappedBy = "complexDonation", fetch = FetchType.LAZY)
     private Sponsor sponsor;
@@ -26,9 +26,9 @@ public class ComplexDonation {
     public ComplexDonation() {
     }
 
-    public ComplexDonation(float amountForSimpleProblem,
-                           float amountForMediumProblem,
-                           float amountForHardProblem) {
+    public ComplexDonation(double amountForSimpleProblem,
+                           double amountForMediumProblem,
+                           double amountForHardProblem) {
         this.amountForSimpleProblem = amountForSimpleProblem;
         this.amountForMediumProblem = amountForMediumProblem;
         this.amountForHardProblem = amountForHardProblem;
@@ -40,27 +40,28 @@ public class ComplexDonation {
     }
 
 
-    public float getAmountForSimpleProblem() {
+
+    public double getAmountForSimpleProblem() {
         return amountForSimpleProblem;
     }
 
-    public void setAmountForSimpleProblem(float amountForSimpleProblem) {
+    public void setAmountForSimpleProblem(double amountForSimpleProblem) {
         this.amountForSimpleProblem = amountForSimpleProblem;
     }
 
-    public float getAmountForMediumProblem() {
+    public double getAmountForMediumProblem() {
         return amountForMediumProblem;
     }
 
-    public void setAmountForMediumProblem(float amountForMediumProblem) {
+    public void setAmountForMediumProblem(double amountForMediumProblem) {
         this.amountForMediumProblem = amountForMediumProblem;
     }
 
-    public float getAmountForHardProblem() {
+    public double getAmountForHardProblem() {
         return amountForHardProblem;
     }
 
-    public void setAmountForHardProblem(float amountForHardProblem) {
+    public void setAmountForHardProblem(double amountForHardProblem) {
         this.amountForHardProblem = amountForHardProblem;
     }
 

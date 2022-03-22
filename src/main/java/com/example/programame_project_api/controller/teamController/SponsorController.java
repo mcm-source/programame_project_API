@@ -17,17 +17,19 @@ public class SponsorController {
     private SponsorService sponsorService;
 
     @PostMapping("/createSponsor")
-    public ResponseEntity<IssueReport> newSponsor(@RequestBody Map<String, Object> SponsorData) {
+    public ResponseEntity<IssueReport> newSponsor(@RequestBody Map<String, Object> SponsorData,
+                                                  @RequestHeader (name="Authorization") String token) {
 
-        return  sponsorService.addSponsorToTeam(SponsorData);
+        return  sponsorService.addSponsorToTeam(SponsorData, token);
 
 
     }
 
     @PostMapping("/updateSponsor")
-    public ResponseEntity updateSponsor(@RequestBody Map<String, Object> SponsorData) {
+    public ResponseEntity updateSponsor(@RequestBody Map<String, Object> SponsorData,
+                                        @RequestHeader (name="Authorization") String token) {
 
-        return sponsorService.updateSponsor(SponsorData);
+        return sponsorService.updateSponsor(SponsorData, token);
 
 
     }
