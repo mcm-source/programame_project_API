@@ -1,6 +1,5 @@
 package com.example.programame_project_api.services;
 
-
 import com.example.programame_project_api.entities.*;
 import com.example.programame_project_api.repositories.ComplexDonationRepository;
 import com.example.programame_project_api.repositories.SimpleDonationRepository;
@@ -9,11 +8,13 @@ import com.example.programame_project_api.repositories.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Service
 public class SponsorService {
 
     @Autowired
@@ -74,7 +75,6 @@ public class SponsorService {
                 return createResponseEntity(HttpStatus.NOT_ACCEPTABLE, "Team not exist");
             }
 
-
         } catch (
                 Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -82,6 +82,31 @@ public class SponsorService {
 
 
     }
+
+
+    public ResponseEntity deleteSponsor(int id) {
+
+        try {
+            Sponsor sponsor = sponsorRepository.findById(id);
+
+            if (sponsor != null) {
+                sponsorRepository.delete(sponsor);
+                return createResponseEntity(HttpStatus.OK, "Sponsor delete Ok");
+            } else {
+                return createResponseEntity(HttpStatus.NOT_FOUND, "Sponsor not exist");
+            }
+
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+
+
+
+
+
 
 
     private boolean doUpdateSponsor(Team team, Map<String, Object> data) {
