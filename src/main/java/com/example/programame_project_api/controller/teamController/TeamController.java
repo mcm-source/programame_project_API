@@ -17,25 +17,28 @@ public class TeamController {
     private TeamService teamService;
 
     @PostMapping("/createTeam")
-    public ResponseEntity<IssueReport> newTeam(@RequestBody Map<String, Object> teamData) {
+    public ResponseEntity<IssueReport> newTeam(@RequestBody Map<String, Object> teamData,
+                                               @RequestHeader (name="Authorization") String token) {
 
-        return  teamService.saveTeam(teamData);
+        return  teamService.saveTeam(teamData, token);
 
 
     }
 
     @PostMapping("/updateTeam")
-    public ResponseEntity updateTeam(@RequestBody Map<String, Object> teamData) {
+    public ResponseEntity updateTeam(@RequestBody Map<String, Object> teamData,
+                                     @RequestHeader (name="Authorization") String token) {
 
-        return teamService.updateTeam(teamData);
+        return teamService.updateTeam(teamData, token);
 
 
     }
 
     @DeleteMapping("/deleteTeam/{id}")
-    public ResponseEntity deleteClient(@PathVariable("dni") int id) {
+    public ResponseEntity deleteTeam(@PathVariable("id") int id,
+                                       @RequestHeader (name="Authorization") String token) {
 
-        return teamService.deleteTeam(id);
+        return teamService.deleteTeam(id, token);
 
     }
 

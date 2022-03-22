@@ -70,6 +70,9 @@ public class AuthController {
         try {
             String rootUser= jwtUtil.extractUsername((String)user.get("token"));
 
+
+
+
             AuthenticationRequest usuarioExiste = userRepository.findByUsername((String)user.get("email"));
 
             if(user.get("password").equals(user.get("passwordRepeat")) && usuarioExiste==null && rootUser.equals("root")) {
@@ -171,7 +174,7 @@ public class AuthController {
 
 
     }
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
+
     @GetMapping("/listUserData")
     public ResponseEntity listUserData() {
 

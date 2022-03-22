@@ -4,12 +4,14 @@ import com.example.programame_project_api.entities.Teacher;
 import com.example.programame_project_api.entities.Team;
 import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.TeamRepository;
+import com.example.programame_project_api.security.JWTUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class TeamService {
@@ -18,12 +20,18 @@ public class TeamService {
     private TeamRepository teamRepository;
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private JWTUtil jwtUtil;
 
-    public ResponseEntity saveTeam(Map<String, Object> teamData) {
+    public ResponseEntity saveTeam(Map<String, Object> teamData, String token) {
+
+
 
         try {
 
-            Teacher teacher = teacherRepository.findByEmail((String) teamData.get("email"));
+
+          //  Teacher teacher = teacherRepository.findByEmail((String) teamData.get("email"));
+            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
 
             if (teacher != null) {
                 if (!existsTeamName(teamData)) {
@@ -37,46 +45,50 @@ public class TeamService {
             }
 
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+
         }
 
     }
 
-    public ResponseEntity updateTeam(Map<String, Object> teamData) {
+    public ResponseEntity updateTeam(Map<String, Object> teamData,  String token) {
 
         try {
+            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
 
-            int idTeam = (Integer) teamData.get("idTeam");
+            int idTeam = (int) teamData.get("idTeam");
 
-            if (teamRepository.existsById(idTeam)) {
+            if (teacher.haveTheTeam(idTeam)) {
                 teamRepository.update(idTeam, teamData);
                 return createResponseEntity(HttpStatus.OK, "Update team ok");
             } else {
-                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Team not exist");
+                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
             }
 
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
 
     }
 
 
-    public ResponseEntity deleteTeam(int id) {
+    public ResponseEntity deleteTeam(int id, String token) {
 
         try {
-            Team team = teamRepository.findById(id);
+            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
 
-            if (team != null) {
+            if (teacher.haveTheTeam(id)) {
+
+                Team team = teamRepository.findById(id);
                 teamRepository.delete(team);
                 return createResponseEntity(HttpStatus.OK, "Team delete Ok");
             } else {
-                return createResponseEntity(HttpStatus.NOT_FOUND, "Team not exist");
+                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
             }
 
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
 
 
@@ -116,6 +128,27 @@ public class TeamService {
 
         return teamRepository.existsByName((String) teamData.get("name"));
     }
+
+
+    private String extractEmailFromToken(String token){
+
+        System.out.println(token);
+        String dato =token;
+        dato = dato.replace("Bearer ","");
+        System.out.println(dato);
+         return  jwtUtil.extractUsername(dato);
+
+
+    }
+
+
+
+
+
+
+
+
+
 
 
 }

@@ -8,11 +8,11 @@ import java.util.Map;
 public interface TeamRepository  extends CrudRepository<Team, Long> {
 
     boolean existsByName(String name);
-    boolean existsById(int id);
-    Team findById(int id);
+    boolean existsById(long id);
+    Team findById(long id);
     Team findByName(String name);
 
-    public default void update(int idTeam, Map<String, Object> teamData) {
+    public default void update(long idTeam, Map<String, Object> teamData) {
 
         Team teamForUpdate= findById(idTeam);
 
