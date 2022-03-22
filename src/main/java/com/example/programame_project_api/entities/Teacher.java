@@ -75,4 +75,21 @@ public class Teacher {
     }
 
 
+    public   boolean haveTheSponsor( long idSponsor) {
+
+
+        for (Team team : listTeams){
+            for(Sponsor sponsor: team.getListSponsors()){
+                if(sponsor.getId()==idSponsor){
+                    return true;
+                }
+            }
+
+
+
+        }
+        return false;
+    }
+
+
 }

@@ -9,14 +9,14 @@ import java.util.Map;
 
 public interface SponsorRepository extends CrudRepository<Sponsor, Long> {
 
-    Sponsor findById(int id);
+    Sponsor findById(long id);
 
 
     public default void updateSponsor(Sponsor sponsor, Map<String, Object> data) {
 
         if ((Boolean) data.get("isSimpleDonation")) {
             sponsor.setName((String) data.get("name"));
-            sponsor.setSimpleDonation(new SimpleDonation((Float) data.get("amount")));
+            sponsor.setSimpleDonation(new SimpleDonation((double) data.get("amount")));
             save(sponsor);
         } else {
             sponsor.setName((String) data.get("name"));

@@ -35,9 +35,10 @@ public class SponsorController {
     }
 
     @DeleteMapping("/deleteSponsor/{id}")
-    public ResponseEntity deleteSponsor(@PathVariable("dni") int id) {
+    public ResponseEntity deleteSponsor(@PathVariable("id") int id,
+                                        @RequestHeader (name="Authorization") String token) {
 
-        return sponsorService.deleteSponsor(id);
+        return sponsorService.deleteSponsor(id, token);
 
     }
 }

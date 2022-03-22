@@ -39,7 +39,7 @@ public class SponsorService {
 
             if (teacher.haveTheTeam(idTeam)) {
                 Team team = teamRepository.findById((Integer) data.get("idTeam"));
-               sponsorRepository.save( createSponsorWithDonation(data, team));
+                sponsorRepository.save(createSponsorWithDonation(data, team));
                 teamRepository.save(team);
                 return createResponseEntity(HttpStatus.OK, "Create sponsor ok");
             } else {
@@ -63,8 +63,6 @@ public class SponsorService {
             Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
             int idTeam = (int) data.get("idTeam");
 
-
-
             if (teacher.haveTheTeam(idTeam)) {
                 Team team = teamRepository.findById((Integer) data.get("idTeam"));
                 if (doUpdateSponsor(team, data)) {
@@ -74,7 +72,7 @@ public class SponsorService {
                 }
 
             } else {
-                return createResponseEntity(HttpStatus.NOT_ACCEPTABLE, "Team not exist");
+                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
             }
 
         } catch (Exception e) {
@@ -85,29 +83,26 @@ public class SponsorService {
     }
 
 
-    public ResponseEntity deleteSponsor(int id) {
+    public ResponseEntity deleteSponsor(int id, String token) {
 
         try {
-            Sponsor sponsor = sponsorRepository.findById(id);
+            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
 
-            if (sponsor != null) {
-                sponsorRepository.delete(sponsor);
+            if (teacher.haveTheSponsor(id)) {
+
+               Sponsor sponsor = sponsorRepository.findById(id);
+               sponsorRepository.delete(sponsor);
                 return createResponseEntity(HttpStatus.OK, "Sponsor delete Ok");
             } else {
-                return createResponseEntity(HttpStatus.NOT_FOUND, "Sponsor not exist");
+                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the sponsor");
             }
 
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+       }
 
 
     }
-
-
-
-
-
 
 
     private boolean doUpdateSponsor(Team team, Map<String, Object> data) {
@@ -121,9 +116,7 @@ public class SponsorService {
                 .filter((sponsorData) -> sponsorData.getId() == sponsorId)
                 .findFirst()
                 .ifPresentOrElse((sponsorConsumer) -> {
-                    complexDonationRepository.delete(sponsorConsumer.getComplexDonation());
                     sponsorConsumer = clearDonationsFromSponsor(sponsorConsumer);
-                    clearDonationsFromSponsor(sponsorConsumer);
                     sponsorRepository.updateSponsor(sponsorConsumer, data);
                     udateOk.set(true);
                 }, () -> {
@@ -141,22 +134,16 @@ public class SponsorService {
 
 
         if (simpleDonation != null) {
-            System.out.println("id donacion"+simpleDonation.getId());
-            simpleDonation.setSponsor(null);
+            System.out.println("id donacion" + simpleDonation.getId());
             sponsor.setSimpleDonation(null);
             sponsorRepository.save(sponsor);
             simpleDonationRepository.deleteById(simpleDonation.getId());
-
-
         }
         if (complexDonation != null) {
-            System.out.println("id donacion"+complexDonation.getId());
-            complexDonation.setSponsor(null);
+            System.out.println("id donacion" + complexDonation.getId());
             sponsor.setComplexDonation(null);
             sponsorRepository.save(sponsor);
             complexDonationRepository.deleteById(complexDonation.getId());
-
-
         }
         return sponsor;
 
@@ -178,7 +165,6 @@ public class SponsorService {
                             (double) data.get("amountForSimpleProblem"),
                             (double) data.get("amountForMediumProblem"),
                             (double) data.get("amountForHardProblem")
-
                     ));
         }
 
@@ -195,13 +181,13 @@ public class SponsorService {
     }
 
 
-    private String extractEmailFromToken(String token){
+    private String extractEmailFromToken(String token) {
 
         System.out.println(token);
-        String dato =token;
-        dato = dato.replace("Bearer ","");
+        String dato = token;
+        dato = dato.replace("Bearer ", "");
         System.out.println(dato);
-        return  jwtUtil.extractUsername(dato);
+        return jwtUtil.extractUsername(dato);
 
 
     }
