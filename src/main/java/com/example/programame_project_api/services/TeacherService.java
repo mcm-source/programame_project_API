@@ -78,7 +78,7 @@ public class TeacherService {
 
         SimpleDonation simpleDonation = sponsor.getSimpleDonation();
         simpleDonation.setSponsor(null);
-        simpleDonation.setTotalAcount(simpleDonation.calculateAmount());
+
 
 
         return new ContainerOverallTable(
@@ -95,7 +95,7 @@ public class TeacherService {
 
         ComplexDonation complexDonation = sponsor.getComplexDonation();
         complexDonation.setSponsor(null);
-        complexDonation.setTotalAcount(complexDonation.calculateAmount());
+
 
 
         return new ContainerOverallTable(
@@ -117,14 +117,10 @@ public class TeacherService {
                 sponsor.setTeam(null);
                 if (sponsor.getSimpleDonation() != null) {
                     SimpleDonation simpleDonation = sponsor.getSimpleDonation();
-                    simpleDonation.setTotalAcount(simpleDonation.calculateAmount());
-                    team.setTotalAcount(team.getTotalAcount() + simpleDonation.getTotalAcount());
                     sponsor.getSimpleDonation().setSponsor(null);
                 }
                 if (sponsor.getComplexDonation() != null) {
                     ComplexDonation complexDonation = sponsor.getComplexDonation();
-                    complexDonation.setTotalAcount(complexDonation.calculateAmount());
-                    team.setTotalAcount(team.getTotalAcount() + complexDonation.getTotalAcount());
                     sponsor.getComplexDonation().setSponsor(null);
                 }
             });

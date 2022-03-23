@@ -21,8 +21,7 @@ public class ComplexDonation {
     @Column(nullable = false)
     private double amountForHardProblem;
 
-    @Transient
-    private double totalAcount;
+
 
 
     @OneToOne(  mappedBy = "complexDonation", fetch = FetchType.LAZY)
@@ -79,26 +78,7 @@ public class ComplexDonation {
         this.sponsor = sponsor;
     }
 
-    public Double calculateAmount (){
 
 
 
-        return ((NUMBEROFSIMPLEPROBLEM*amountForSimpleProblem)
-                +(NUMBEROFMEDIUMPROBLEM*amountForMediumProblem)
-                +(NUMBEROFHARDPROBLEM*amountForHardProblem));
-
-
-
-
-
-
-    }
-
-    public double getTotalAcount() {
-        return totalAcount;
-    }
-
-    public void setTotalAcount(double totalAcount) {
-        this.totalAcount = totalAcount;
-    }
 }

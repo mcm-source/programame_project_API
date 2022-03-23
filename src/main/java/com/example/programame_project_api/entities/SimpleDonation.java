@@ -18,8 +18,7 @@ public class SimpleDonation {
     @Column(nullable = false)
     private double amount;
 
-    @Transient
-    private double totalAcount;
+
 
 
 
@@ -56,22 +55,7 @@ public class SimpleDonation {
         this.sponsor = sponsor;
     }
 
-    public Double calculateAmount (){
-
-        int numberTotalProblems = NUMBEROFSIMPLEPROBLEM+NUMBEROFMEDIUMPROBLEM+NUMBEROFHARDPROBLEM;
-
-        return (numberTotalProblems*amount);
 
 
 
-
-    }
-
-    public double getTotalAcount() {
-        return totalAcount;
-    }
-
-    public void setTotalAcount(double totalAcount) {
-        this.totalAcount = totalAcount;
-    }
 }
