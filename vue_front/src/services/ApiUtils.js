@@ -43,7 +43,7 @@ export class ApiUtils {
   }
 
 
-  static async makeAuthrorizeGetClientData(endPoint) {
+  static async makeAuthrorizeGetData(endPoint) {
     console.log(endPoint);
     let aut = "Bearer " + TokenUtils.getToken();
     console.log(this.DOMAIN_URL_IN_USE+endPoint);
@@ -56,7 +56,7 @@ export class ApiUtils {
     return await response.json();
   }
 
-  static async makeAuthrorizeDeleteClientData(endPoint) {
+  static async makeAuthrorizeDeleteData(endPoint) {
     console.log(endPoint);
     let aut = "Bearer " + TokenUtils.getToken();
     console.log(this.DOMAIN_URL_IN_USE+endPoint);

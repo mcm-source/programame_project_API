@@ -16,6 +16,7 @@ public class SponsorController {
     @Autowired
     private SponsorService sponsorService;
 
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/createSponsor")
     public ResponseEntity<IssueReport> newSponsor(@RequestBody Map<String, Object> SponsorData,
                                                   @RequestHeader (name="Authorization") String token) {
@@ -25,6 +26,7 @@ public class SponsorController {
 
     }
 
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/updateSponsor")
     public ResponseEntity updateSponsor(@RequestBody Map<String, Object> SponsorData,
                                         @RequestHeader (name="Authorization") String token) {
@@ -34,6 +36,7 @@ public class SponsorController {
 
     }
 
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @DeleteMapping("/deleteSponsor/{id}")
     public ResponseEntity deleteSponsor(@PathVariable("id") int id,
                                         @RequestHeader (name="Authorization") String token) {

@@ -50,7 +50,7 @@
               <option v-for="ccaa in comunidades">{{ ccaa.nombre }}</option>
             </select>
 
-            <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="openNewTeamForm()">
+            <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="createTeam()">
               Añadir Equipo
             </button>
           </div>
@@ -58,7 +58,8 @@
         <!--        bloque por cada equipo-->
         <div class="div_equipo" v-for="(equipo, index) in equipos">
           <h3>{{ equipo.name }}
-            <b-button type="button" class="btn btn-default float-right" aria-label="Left Align">
+            <b-button type="button" class="btn btn-default float-right" aria-label="Left Align"
+                      v-on:click="deleteTeam(index)">
               <span class="glyphicon glyphicon-remove icon-red" aria-hidden="true"></span>
             </b-button>
             <b-button type="button" class="btn btn-default float-right" aria-label="Left Align"
@@ -108,7 +109,7 @@
               </select>
 
               <button type="button" class="btn btn-default" aria-label="Left Align"
-                      v-on:click="newFormTriggerChange(index,0, null)">
+                      v-on:click=updateTeam(index)>
                 Modificar Equipo
               </button>
             </div>
@@ -302,7 +303,7 @@
               >
 
               <button type="button" class="btn btn-default" aria-label="Left Align"
-                      v-on:click="newFormTriggerChange(index,1,null)">
+                      v-on:click=createSponsor(index)>
                 Añadir Benefactor
               </button>
             </div>
@@ -318,10 +319,11 @@
 import Navigation from "../../components/Navigation";
 import auth from "../../logic/auth";
 import {TokenUtils} from "../../services/TokenUtils";
+import {ApiUtils} from "../../services/ApiUtils";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css"
 
-let provincias
+let provincias, response
 export default {
   name: "ProfessorDashboard",
   data() {
@@ -329,78 +331,13 @@ export default {
       show: false,
       addTeam: false,
       radioButtonsCuantia: 0, //0:complexDonation, 1:simpleDonation
-      comunidad: '',
+      comunidad: '', //Modelo de ubicación
       booleanTriggers: [[false, false, false], [false, false, false]], //editTeam, addSponsor, editSponsor x Team
-      teamFormModel: ["", "", "", ""], //0: name, 1:teamMembers, 2:schoolName, 3:location
+      teamFormModel: ["", "", ""], //0: name, 1:teamMembers, 2:schoolName
       sponsorFormModelName:"",
       sponsorFormModel:[0,0,0,0], //0:amountForSimpleProblem, 1:amountForMediumProblem, 2:amountForHardProblem, 3:amount
-      equipos: [{
-        "id": 2,
-        "name": "nombre1",
-        "teamMembers": "a, b y super c",
-        "schoolname": "escuela1",
-        "location": "Pontevedra",
-        "teacher": null,
-        "listSponsors": [{
-          "id": 34,
-          "name": "ssponsor",
-          "team": null,
-          "simpleDonation": {
-            "id": 56,
-            "amount": 20.0,
-            "sponsor": null
-          },
-          "complexDonation": null
-        }, {
-          "id": 36,
-          "name": "ssponsor222",
-          "team": null,
-          "simpleDonation": null,
-          "complexDonation": {
-            "id": 55,
-            "amountForSimpleProblem": 4.0,
-            "amountForMediumProblem": 8.0,
-            "amountForHardProblem": 12.0,
-            "sponsor": null
-          }
-        }]
-      },
-        {
-          "id": 98,
-          "name": "nombre2",
-          "teamMembers": "Pin y pon",
-          "schoolname": "escuela1",
-          "location": "Albacete",
-          "teacher": null,
-          "listSponsors": [{
-            "id": 40,
-            "name": "spunsor",
-            "team": null,
-            "simpleDonation": null,
-            "complexDonation": {
-              "id": 85,
-              "amountForSimpleProblem": 2.0,
-              "amountForMediumProblem": 6.0,
-              "amountForHardProblem": 15.0,
-              "sponsor": null
-            }
-          }
-          ]
-        }
-      ],
-
-      comunidades: [{
-        'nombre': 'Galicia',
-
-      },
-        {
-          'nombre': 'Madrid',
-
-        },
-        {
-          'nombre': 'Andalucía',
-
-        }],
+      equipos: [],
+      comunidades: [],
     }
   },
   methods: {
@@ -442,7 +379,7 @@ export default {
         if (triggerIndex == 0) {
           this.teamFormModel[0] = this.equipos[index].name
           this.teamFormModel[1] = this.equipos[index].teamMembers
-          this.teamFormModel[2] = this.equipos[index].schoolname
+          this.teamFormModel[2] = this.equipos[index].schoolName
           this.comunidad = this.equipos[index].location
         }
         //Si se va a crear sponsor se vacía el modelo
@@ -474,9 +411,209 @@ export default {
     },
     tabla(frase) {
       console.log(frase)
-    }
+    },
+    async getTeamsFromDB(){
+      this.equipos=[]
+      let t
+      try {
+          response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
+          //no sería necesario usar auth para guardar los datos, pero así quedarían disponibles
+          this.equipos=response
+          console.log(this.equipos)
+          console.log(this.equipos[0])
+          console.log(response.data()) //No muestra sin entrar en error
+          // console.log(this.equipos.data())
+          if(this.equipos=null){
+            console.log('no hay equipos')
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        this.booleanTriggers.clear
+        for(t in this.equipos){
+          this.booleanTriggers.push([false, false, false])
+          console.log('add 1 trigger')
+        }
+    },
+    async createTeam(){
+      let con
+      try {
+        let name, teamMembers, schoolName, location
+        name=this.teamFormModel[0]
+        teamMembers=this.teamFormModel[1]
+        schoolName=this.teamFormModel[2]
+        location=this.comunidad
+        console.log({
+          name,
+          teamMembers,
+          schoolName,
+          location
+        });
+        response=await ApiUtils.makeAuthrorizePost("/team/createTeam", {
+          name,
+          teamMembers,
+          schoolName,
+          location
+        });
+        console.log(response)
+      } catch (error) {
+        console.log(error);
+        //this.error = true;
+      }
+      try{
+        con=await this.getTeamsFromDB()
+      }catch (error){
+        console.log(error)
+      }
+      this.addTeam=false
+    },
+    async updateTeam(index){
+      let con
+      try {
+        let name, teamMembers, schoolName, location, idTeam
+        name=this.teamFormModel[0]
+        teamMembers=this.teamFormModel[1]
+        schoolName=this.teamFormModel[2]
+        location=this.comunidad
+        idTeam=this.equipos[index].id
+        console.log({
+          idTeam,
+          name,
+          teamMembers,
+          schoolName,
+          location
+        });
+        response=await ApiUtils.makeAuthrorizePost("/team/updateTeam", {
+          idTeam,
+          name,
+          teamMembers,
+          schoolName,
+          location
+        });
+        console.log(response)
+        // con=await this.getTeamsFromDB() no llega aquí por el error en json
+      } catch (error) {
+        console.log(error);
+        //this.error = true;
+      }
+      this.newFormTriggerChange(index,0, null)
+      try{
+        con=await this.getTeamsFromDB()
+      }catch (error){
+        console.log(error)
+      }
+      this.addTeam=false
+    },
+    async deleteTeam(index){
+      let con
+      try {
+        let idTeam
+        idTeam=this.equipos[index].id
+        console.log({
+          idTeam
+        });
+        response=await ApiUtils.makeAuthrorizeDeleteData("/team/deleteTeam/"+idTeam)
+        console.log(response)
+        // con=await this.getTeamsFromDB() no llega aquí por el error en json
+      } catch (error) {
+        console.log(error);
+        //this.error = true;
+      }
+      try{
+        con=await this.getTeamsFromDB()
+      }catch (error){
+        console.log(error)
+      }
+      this.addTeam=false
+    },
+    async createSponsor(index){
+      let con
+      try {
+        let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam
+        idTeam=this.equipos[index].id
+        name=this.sponsorFormModelName
+        amountForSimpleProblem=this.sponsorFormModel[0]
+        amountForMediumProblem=this.sponsorFormModel[1]
+        amountForHardProblem=this.sponsorFormModel[2]
+        amount=this.sponsorFormModel[3]
+        if(this.radioButtonsCuantia==0){ //Cuantía compleja
+          isSimpleDonation=false
+          console.log({
+              idTeam,
+              name,
+              isSimpleDonation,
+              amountForSimpleProblem,
+              amountForMediumProblem,
+              amountForHardProblem
+            }
+          )
+          response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
+            idTeam,
+            name,
+            isSimpleDonation,
+            amountForSimpleProblem,
+            amountForMediumProblem,
+            amountForHardProblem
+          });
+        }else if(this.radioButtonsCuantia==1){ //Cuantía simple
+          isSimpleDonation=true
+          console.log({
+              idTeam,
+              name,
+              isSimpleDonation,
+              amount
+            }
+          )
+          response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
+            idTeam,
+            name,
+            isSimpleDonation,
+            amount
+          });
+        }
+        console.log(response)
+      } catch (error) {
+        console.log(error);
+        //this.error = true;
+      }
+      try{
+        con=await this.getTeamsFromDB()
+      }catch (error){
+        console.log(error)
+      }
+      //this.newFormTriggerChange(index,1,null)
+    },
   },
-  mounted() {
+  async mounted() {
+    let t
+    try {
+      //Este método devuelve a home si no hay sesión iniciada
+      if(TokenUtils.getToken()==null){
+        this.$router.push("/");
+      }else{
+        this.equipos=[]
+        try {
+          response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
+          //no sería necesario usar auth para guardar los datos, pero así quedarían disponibles
+          this.equipos=response
+          console.log(this.equipos)
+          console.log(this.equipos[0])
+          console.log(response.data()) //No muestra sin entrar en error
+          if(this.equipos=null){
+            console.log('no hay equipos')
+          }
+        } catch (error) {
+          console.log(error);
+        }
+        this.booleanTriggers.clear
+        for(t in this.equipos){
+          this.booleanTriggers.push([false, false, false])
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      this.$router.push("/");
+    }
     const provincias=require('../../logic/provincias.json')
     this.comunidades=provincias
   }
