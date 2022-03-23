@@ -321,8 +321,7 @@ import {TokenUtils} from "../../services/TokenUtils";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css"
 
-let total_equipo1 = 0;
-let total_equipo2 = 0;
+let provincias
 export default {
   name: "ProfessorDashboard",
   data() {
@@ -340,7 +339,7 @@ export default {
         "name": "nombre1",
         "teamMembers": "a, b y super c",
         "schoolname": "escuela1",
-        "location": "Galicia",
+        "location": "Pontevedra",
         "teacher": null,
         "listSponsors": [{
           "id": 34,
@@ -371,7 +370,7 @@ export default {
           "name": "nombre2",
           "teamMembers": "Pin y pon",
           "schoolname": "escuela1",
-          "location": "Andalucía",
+          "location": "Albacete",
           "teacher": null,
           "listSponsors": [{
             "id": 40,
@@ -478,7 +477,8 @@ export default {
     }
   },
   mounted() {
-
+    const provincias=require('../../logic/provincias.json')
+    this.comunidades=provincias
   }
 };
 </script>
