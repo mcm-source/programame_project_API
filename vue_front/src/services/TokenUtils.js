@@ -11,7 +11,6 @@ export class TokenUtils {
     return this.token;
   }
   static getTeacherControl(){
-    console.log(sessionStorage.getItem("teacherControl"))
     return sessionStorage.getItem("teacherControl")
   }
 

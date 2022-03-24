@@ -31,15 +31,15 @@ export class ApiUtils {
     TokenUtils.getToken();
     let aut = "Bearer " + TokenUtils.getToken();
     console.log(this.DOMAIN_URL_IN_USE+endPoint);
-    const response = await(await fetch(this.DOMAIN_URL_IN_USE+endPoint, {
+    const response = await( fetch(this.DOMAIN_URL_IN_USE+endPoint, {
       method: "POST",
       headers: {
         Authorization: aut,
         "Content-Type": "application/json",
       },
       body: JSON.stringify(object),
-    })).json()
-    return await response.json();
+    }))
+    return response.status;
   }
 
   static async makeGeneralGetData(endPoint) {
@@ -77,7 +77,7 @@ export class ApiUtils {
         Authorization: aut
       },
     });
-    return await response.json();
+    return response.status;
   }
   static async makeAuthrorizeDeleteRoot(endPoint, object) {
     console.log(endPoint);
@@ -92,7 +92,7 @@ export class ApiUtils {
       },
       body: JSON.stringify(object),
     })).json()
-    return await response.json();
+    return response.status;
   }
 
 
