@@ -423,19 +423,23 @@ export default {
       this.equipos=[]
       let t
       try {
+        //Si no es admin accediendo a otro listado
+        if(TokenUtils.getTeacherControl().toString()=="null"){
           response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
-          //no sería necesario usar auth para guardar los datos, pero así quedarían disponibles
-          this.equipos=response
-          if(this.equipos==null){
-            console.log('no hay equipos')
-          }
+
+        }else{ //Admin que viene de dashboard de administración
+          response = await ApiUtils.makeAuthrorizeGetData("/team/getTeamData/"+TokenUtils.getTeacherControl())
+        }
+        this.equipos=response
+        if(this.equipos==null){
+          console.log('no hay equipos')
+        }
         } catch (error) {
           console.log(error);
         }
         this.booleanTriggers.clear
         for(t in this.equipos){
           this.booleanTriggers.push([false, false, false])
-          console.log('add 1 trigger')
         }
     },
     async createTeam(){
@@ -446,12 +450,6 @@ export default {
         teamMembers=this.teamFormModel[1]
         schoolName=this.teamFormModel[2]
         location=this.comunidad
-        console.log({
-          name,
-          teamMembers,
-          schoolName,
-          location
-        });
         response=await ApiUtils.makeAuthrorizePost("/team/createTeam", {
           name,
           teamMembers,
@@ -699,21 +697,7 @@ export default {
       if(TokenUtils.getToken()==null){
         this.$router.push("/");
       }else{
-        this.equipos=[]
-        try {
-          response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
-          //no sería necesario usar auth para guardar los datos, pero así quedarían disponibles
-          this.equipos=response
-          if(this.equipos==null){
-            console.log('no hay equipos')
-          }
-        } catch (error) {
-          console.log(error);
-        }
-        this.booleanTriggers.clear
-        for(t in this.equipos){
-          this.booleanTriggers.push([false, false, false])
-        }
+        const r=this.getTeamsFromDB()
       }
     } catch (error) {
       console.log(error);

@@ -44,6 +44,9 @@
         <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="goToTeams"v-show="userLoged!=null">
           Mis Equipos
         </button>
+        <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="goToAdministrator"v-show="userLoged!=null">
+          Profesores y control
+        </button>
           <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="salir"v-show="userLoged!=null">
             <span class="glyphicon glyphicon-user" aria-hidden="true"> Salir</span>
           </button>
@@ -61,7 +64,7 @@
 </template>
 
 <script>
-import Navigation from "./components/Navigation";
+
 import {ApiUtils} from "./services/ApiUtils";
 import {TokenUtils} from "./services/TokenUtils"
 
@@ -94,12 +97,15 @@ export default {
             }),
           })
         ).json()
+        if(token ==undefined){
+          console.log('Login mal')
+        }
         TokenUtils.saveToken(token.jwt);
         console.log("From token utils: ", TokenUtils.getToken());
         // console.log("From token utils user: ", TokenUtils.getUsername());
         this.userLoged=this.usernameForm
         this.show=false
-        this.$router.push("/professorDashboard");
+        this.goToTeams()
       } catch (error) {
         console.log(error);
         this.error = true;
@@ -109,19 +115,33 @@ export default {
     async salir(){
       try {
         TokenUtils.logOut()
-        this.$router.push("/");
         this.userLoged=null
         this.usernameForm=""
         this.passwordForm=""
         this.show=false
+        this.$router.push("/").catch(()=>{})
       } catch (error) {
         console.log(error);
       }
     },
     goToTeams(){
+      TokenUtils.setTeacherControl(null)
       this.show=false
-      this.$router.push("/professorDashboard");
+
+        this.$router.push("/professorDashboard").catch(()=>{
+          console.log('recargarPag')
+          window.location.reload()})
+
+      // this.$router.push("/professorDashboard");
     },
+    goToAdministrator(){
+      this.show=false
+      this.$router.push("/administratorDashboard");
+    },
+  }, mounted(){
+    if (TokenUtils.getToken()!==null){
+      this.userLoged="FromReload"
+    }
   }
 };
 </script>

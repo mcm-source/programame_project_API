@@ -42,6 +42,17 @@ export class ApiUtils {
     return await response.json();
   }
 
+  static async makeGeneralGetData(endPoint) {
+    console.log(endPoint);
+    console.log(this.DOMAIN_URL_IN_USE+endPoint);
+    const response = await fetch(this.DOMAIN_URL_IN_USE+endPoint, {
+      method: "GET",
+      headers: {
+
+      },
+    });
+    return await response.json();
+  }
 
   static async makeAuthrorizeGetData(endPoint) {
     console.log(endPoint);

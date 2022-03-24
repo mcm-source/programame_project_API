@@ -65,7 +65,7 @@ export default {
   },
   async mounted() {
     try{
-      const res = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForOverallTable")
+      const res = await ApiUtils.makeGeneralGetData("/teacher/listDataForOverallTable")
       this.tableRows=res
     }catch(error){
       console.log(error)
@@ -96,20 +96,6 @@ export default {
   margin: 2rem auto;
   padding: 1rem ;
 
-}
-.intern_form{
-  /*float: bottom;*/
-  width:100%;
-  /*height: 80px;*/
-  display: grid;
-  grid-template-columns: 1fr;
-  font-size: medium;
-  /*border-radius: 4px;*/
-  /*box-shadow: 0 1px 6px rgba(0,0,0,.2);*/
-  padding: 10px;
-}
-.margin_down{
-  margin-bottom: 10px;
 }
 
 </style>
