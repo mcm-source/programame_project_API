@@ -84,12 +84,7 @@ export default {
       try{
         username=this.usernameForm
         password=this.passwordForm
-        console.log("{\"username\":\""+username+"\",\"password\":\""+password+"\"}")
         token = await (
-
-
-          //await fetch("http://localhost:8091/auth/login", {
-          //ApiUtils.DOMAIN_URL_IN_USE+"/auth/login"
           await fetch(ApiUtils.DOMAIN_URL_IN_USE+"/auth/login", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
@@ -103,8 +98,8 @@ export default {
         console.log("From token utils: ", TokenUtils.getToken());
         // console.log("From token utils user: ", TokenUtils.getUsername());
         this.userLoged=this.usernameForm
-        console.log("login")
         this.show=false
+        this.$router.push("/professorDashboard");
       } catch (error) {
         console.log(error);
         this.error = true;
@@ -116,7 +111,6 @@ export default {
         TokenUtils.logOut()
         this.$router.push("/");
         this.userLoged=null
-        console.log("sair")
         this.usernameForm=""
         this.passwordForm=""
         this.show=false
@@ -128,25 +122,6 @@ export default {
       this.show=false
       this.$router.push("/professorDashboard");
     },
-    async LogOut() {
-      try {
-        TokenUtils.logOut()
-        this.$router.push("/login");
-      } catch (error) {
-        console.log(error);
-      }
-    },
-    async Register(){
-      try {
-        username = TokenUtils.getUsername()
-        console.log(username)
-        if(username=="root"){
-          this.$router.push("/register/createUser")
-        }
-      }catch(error){
-        console.log(error)
-      }
-    }
   }
 };
 </script>

@@ -8,6 +8,7 @@
             Añadir Equipo
           </button>
         </h2>
+        <confirm-dialogue ref="confirmDialogue"></confirm-dialogue>
         <!--        formulario de crear equipo-->
         <div class="div_equipo " v-show="addTeam">
           <div class="intern_form">
@@ -320,12 +321,14 @@ import Navigation from "../../components/Navigation";
 import auth from "../../logic/auth";
 import {TokenUtils} from "../../services/TokenUtils";
 import {ApiUtils} from "../../services/ApiUtils";
+import ConfirmDialogue from "../../components/ConfirmDialogue";
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css"
 
 let provincias, response
 export default {
   name: "ProfessorDashboard",
+  components: { ConfirmDialogue },
   data() {
     return {
       show: false,
@@ -511,14 +514,26 @@ export default {
     async deleteTeam(index){
       let con
       try {
-        let idTeam
-        idTeam=this.equipos[index].id
-        console.log({
-          idTeam
-        });
-        response=await ApiUtils.makeAuthrorizeDeleteData("/team/deleteTeam/"+idTeam)
-        console.log(response)
-        // con=await this.getTeamsFromDB() no llega aquí por el error en json
+
+        const ok = await this.$refs.confirmDialogue.show({
+          title: '¿Eliminar '+this.equipos[index].name+'?',
+          message: 'Esta operación no se puede deshacer.',
+          okButton: 'Eliminar',
+          cancelButton: 'Cancelar'
+        })
+
+        if (ok) {
+          let idTeam
+          idTeam=this.equipos[index].id
+          console.log({
+            idTeam
+          });
+          response=await ApiUtils.makeAuthrorizeDeleteData("/team/deleteTeam/"+idTeam)
+          console.log(response)
+          // con=await this.getTeamsFromDB() no llega aquí por el error en json
+        }
+
+
       } catch (error) {
         console.log(error);
         //this.error = true;
@@ -528,7 +543,6 @@ export default {
       }catch (error){
         console.log(error)
       }
-      this.addTeam=false
     },
     async createSponsor(index){
       let con
@@ -656,14 +670,24 @@ export default {
     async deleteSponsor(index, index2){
       let con
       try {
-        let idSponsor
-        idSponsor=this.equipos[index].listSponsors[index2].id
-        console.log({
-          idSponsor
-        });
-        response=await ApiUtils.makeAuthrorizeDeleteData("/sponsor/deleteSponsor/"+idSponsor)
-        console.log(response)
-        // con=await this.getTeamsFromDB() no llega aquí por el error en json
+
+        const ok = await this.$refs.confirmDialogue.show({
+          title: '¿Eliminar '+this.equipos[index].listSponsors[index2].name+'?',
+          message: 'Esta operación no se puede deshacer.',
+          okButton: 'Eliminar',
+          cancelButton: 'Cancelar'
+        })
+
+        if (ok) {
+          let idSponsor
+          idSponsor=this.equipos[index].listSponsors[index2].id
+          console.log({
+            idSponsor
+          });
+          response=await ApiUtils.makeAuthrorizeDeleteData("/sponsor/deleteSponsor/"+idSponsor)
+          console.log(response)
+          // con=await this.getTeamsFromDB() no llega aquí por el error en json
+        }
       } catch (error) {
         console.log(error);
         //this.error = true;
