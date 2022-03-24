@@ -14,6 +14,8 @@ public class AuthenticationRequest {
     private String password;
     @Column(nullable = false)
     private Boolean block;
+    @Column(nullable = false)
+    private UserRole userRole;
 
     public AuthenticationRequest() {
     }
@@ -53,4 +55,11 @@ public class AuthenticationRequest {
         this.username = username;
     }
 
+    public UserRole getUserRole() {
+        return userRole;
+    }
+
+    public void setUserRole(UserRole userRole) {
+        this.userRole = userRole;
+    }
 }
