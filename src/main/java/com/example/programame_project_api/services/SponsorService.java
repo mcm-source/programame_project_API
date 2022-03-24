@@ -3,6 +3,7 @@ package com.example.programame_project_api.services;
 import com.example.programame_project_api.entities.*;
 import com.example.programame_project_api.repositories.*;
 import com.example.programame_project_api.security.JWTUtil;
+import com.example.programame_project_api.servicesTools.ServicesTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,27 +29,35 @@ public class SponsorService {
     private ComplexDonationRepository complexDonationRepository;
     @Autowired
     private JWTUtil jwtUtil;
+    @Autowired
+    private ServicesTools servicesTools;
 
 
     public ResponseEntity addSponsorToTeam(Map<String, Object> data, String token) {
 
         try {
 
-            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
+            Teacher teacher = teacherRepository.findByEmail(servicesTools.extractEmailFromToken(token));
             int idTeam = (int) data.get("idTeam");
             if (teacher.haveTheTeam(idTeam)) {
                 Team team = teamRepository.findById((Integer) data.get("idTeam"));
-                Sponsor newsponsor=createSponsorWithDonation(data, team);
+                Sponsor newsponsor = createSponsorWithDonation(data, team);
                 sponsorRepository.save(newsponsor);
                 teamRepository.save(team);
-                return createResponseEntity(HttpStatus.OK, "Create sponsor ok");
+                return servicesTools.createResponseEntity(
+                        HttpStatus.OK,
+                        "Create sponsor ok");
             } else {
-                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
+                return servicesTools.createResponseEntity(
+                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        "Teacher doesn´t have the team");
             }
 
 
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
         }
 
 
@@ -59,24 +68,61 @@ public class SponsorService {
 
 
         try {
-
-            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
-            int idTeam = (int) data.get("idTeam");
-
-            if (teacher.haveTheTeam(idTeam)) {
-                Team team = teamRepository.findById((Integer) data.get("idTeam"));
-                if (doUpdateSponsor(team, data)) {
-                    return createResponseEntity(HttpStatus.OK, "Update sponsor ok");
-                } else {
-                    return createResponseEntity(HttpStatus.OK, "Update has fault");
-                }
-
+            if (servicesTools.isUserAdmin(token)) {
+                return updateSponsorWithAdminUser(data);
             } else {
-                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
+                return updateSponsorFromTeacher(data, token);
             }
 
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+
+
+    }
+
+
+    private ResponseEntity updateSponsorWithAdminUser(Map<String, Object> data) {
+
+
+        Team team = teamRepository.findById((Integer) data.get("idTeam"));
+        if (doUpdateSponsor(team, data)) {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Update sponsor ok");
+        } else {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Update has fault,the sponsor may not exist ");
+        }
+
+
+    }
+
+
+    private ResponseEntity updateSponsorFromTeacher(Map<String, Object> data, String token) {
+
+        Teacher teacher = teacherRepository.findByEmail(servicesTools.extractEmailFromToken(token));
+        int idTeam = (int) data.get("idTeam");
+
+        if (teacher.haveTheTeam(idTeam)) {
+            Team team = teamRepository.findById((Integer) data.get("idTeam"));
+            if (doUpdateSponsor(team, data)) {
+                return servicesTools.createResponseEntity(
+                        HttpStatus.OK,
+                        "Update sponsor ok");
+            } else {
+                return servicesTools.createResponseEntity(
+                        HttpStatus.OK,
+                        "Update has fault, the sponsor may not exist");
+            }
+
+        } else {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Teacher doesn´t have the team");
         }
 
 
@@ -86,21 +132,55 @@ public class SponsorService {
     public ResponseEntity deleteSponsor(int id, String token) {
 
         try {
-            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
-
-            if (teacher.haveTheSponsor(id)) {
-
-               Sponsor sponsor = sponsorRepository.findById(id);
-               sponsorRepository.delete(sponsor);
-                return createResponseEntity(HttpStatus.OK, "Sponsor delete Ok");
+            if (servicesTools.isUserAdmin(token)) {
+                return deleteSponsorWithAdminUser(id);
             } else {
-                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the sponsor");
+                return deleteSponsorFromTeacher(id, token);
             }
-
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
-       }
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
 
+
+    }
+
+    private ResponseEntity deleteSponsorWithAdminUser(int id) {
+
+
+        if (sponsorRepository.existsById(id)) {
+
+            Sponsor sponsor = sponsorRepository.findById(id);
+            sponsorRepository.delete(sponsor);
+            return servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Sponsor delete Ok");
+        } else {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Sponsor doesn´t exist");
+        }
+
+    }
+
+
+    private ResponseEntity deleteSponsorFromTeacher(int id, String token) {
+
+        Teacher teacher = teacherRepository.findByEmail(servicesTools.extractEmailFromToken(token));
+
+        if (teacher.haveTheSponsor(id)) {
+
+            Sponsor sponsor = sponsorRepository.findById(id);
+            sponsorRepository.delete(sponsor);
+            return servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Sponsor delete Ok");
+        } else {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Teacher doesn´t have the sponsor");
+        }
 
     }
 
@@ -156,7 +236,7 @@ public class SponsorService {
 
             return new Sponsor((String) data.get("name"),
                     team,
-                    new SimpleDonation(Double.parseDouble((String )data.get("amount")))
+                    new SimpleDonation(Double.parseDouble((String) data.get("amount")))
             );
 
 
@@ -165,37 +245,16 @@ public class SponsorService {
             return new Sponsor((String) data.get("name"),
                     team,
                     new ComplexDonation(
-                            Double.parseDouble((String )data.get("amountForSimpleProblem")),
-                            Double.parseDouble((String )data.get("amountForMediumProblem")),
-                            Double.parseDouble((String )data.get("amountForHardProblem"))
-//                            (double) data.get("amountForSimpleProblem"),
-//                            (double) data.get("amountForMediumProblem"),
-//                            (double) data.get("amountForHardProblem")
+                            Double.parseDouble((String) data.get("amountForSimpleProblem")),
+                            Double.parseDouble((String) data.get("amountForMediumProblem")),
+                            Double.parseDouble((String) data.get("amountForHardProblem"))
+
                     ));
         }
 
     }
 
-    private ResponseEntity createResponseEntity(HttpStatus status, String bodyMessage) {
 
-        return ResponseEntity
-                .status(status)
-                .body(bodyMessage);
-
-
-    }
-
-
-    private String extractEmailFromToken(String token) {
-
-        System.out.println(token);
-        String dato = token;
-        dato = dato.replace("Bearer ", "");
-        System.out.println(dato);
-        return jwtUtil.extractUsername(dato);
-
-
-    }
 }
 
 

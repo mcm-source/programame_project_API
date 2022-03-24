@@ -11,6 +11,7 @@ import java.util.Map;
 public interface SponsorRepository extends CrudRepository<Sponsor, Long> {
 
     Sponsor findById(long id);
+    boolean existsById(long id);
 
     List<Sponsor> findAll();
 

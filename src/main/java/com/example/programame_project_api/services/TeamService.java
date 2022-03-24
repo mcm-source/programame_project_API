@@ -1,20 +1,18 @@
 package com.example.programame_project_api.services;
 
-import com.example.programame_project_api.entities.AuthenticationRequest;
 import com.example.programame_project_api.entities.Teacher;
 import com.example.programame_project_api.entities.Team;
-import com.example.programame_project_api.entities.UserRole;
 import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.TeamRepository;
 import com.example.programame_project_api.repositories.UserRepository;
 import com.example.programame_project_api.security.JWTUtil;
+import com.example.programame_project_api.servicesTools.ServicesTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Service
 public class TeamService {
@@ -27,27 +25,37 @@ public class TeamService {
     private JWTUtil jwtUtil;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ServicesTools servicesTools;
 
     public ResponseEntity saveTeam(Map<String, Object> teamData, String token) {
 
 
         try {
 
-            Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
+            Teacher teacher = teacherRepository.findByEmail(servicesTools.extractEmailFromToken(token));
 
             if (teacher != null) {
-                if (!existsTeamName(teamData)) {
+                if (!servicesTools.existsTeamName(teamData)) {
                     teamRepository.save(createTeam(teamData, teacher));
-                    return createResponseEntity(HttpStatus.OK, "Create team ok");
+                    return  servicesTools.createResponseEntity(
+                            HttpStatus.OK,
+                            "Create team ok");
                 } else {
-                    return createResponseEntity(HttpStatus.NOT_ACCEPTABLE, "Team name already exist");
+                    return  servicesTools.createResponseEntity(
+                            HttpStatus.NOT_ACCEPTABLE,
+                            "Team name already exist");
                 }
             } else {
-                return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher not exist");
+                return  servicesTools.createResponseEntity(
+                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        "Teacher not exist");
             }
 
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
 
         }
 
@@ -56,14 +64,16 @@ public class TeamService {
     public ResponseEntity updateTeam(Map<String, Object> teamData, String token) {
 
         try {
-            if (isUserAdmin(token)) {
+            if (servicesTools.isUserAdmin(token)) {
                 return updateTeamWithAdminUser(teamData);
             } else {
-                return updateTeamWithGeneralTeacher(teamData, token);
+                return updateTeamFromTeacher(teamData, token);
             }
 
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
         }
 
 
@@ -76,25 +86,33 @@ public class TeamService {
 
         if (teamRepository.existsById(idTeam)) {
             teamRepository.update(idTeam, teamData);
-            return createResponseEntity(HttpStatus.OK, "Update team ok");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Update team ok");
         } else {
-            return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Team doesn´t exist");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Team doesn´t exist");
         }
 
     }
 
 
-    private ResponseEntity updateTeamWithGeneralTeacher(Map<String, Object> teamData, String token) {
+    private ResponseEntity updateTeamFromTeacher(Map<String, Object> teamData, String token) {
 
-        Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
+        Teacher teacher = teacherRepository.findByEmail(servicesTools.extractEmailFromToken(token));
 
         int idTeam = (int) teamData.get("idTeam");
 
         if (teacher.haveTheTeam(idTeam)) {
             teamRepository.update(idTeam, teamData);
-            return createResponseEntity(HttpStatus.OK, "Update team ok");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Update team ok");
         } else {
-            return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Teacher doesn´t have the team");
         }
 
     }
@@ -104,13 +122,15 @@ public class TeamService {
 
         try {
 
-            if (isUserAdmin(token)) {
+            if (servicesTools.isUserAdmin(token)) {
                 return deleteTeamWithAdminUser(id);
             } else {
                 return deleteTeamWithGeneralTeacher(id, token);
             }
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
         }
 
 
@@ -122,9 +142,13 @@ public class TeamService {
         if (teamRepository.existsById(id)) {
             Team team = teamRepository.findById(id);
             teamRepository.delete(team);
-            return createResponseEntity(HttpStatus.OK, "Team delete Ok");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Team delete Ok");
         } else {
-            return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Team doesn´t exist");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Team doesn´t exist");
         }
 
     }
@@ -132,15 +156,19 @@ public class TeamService {
 
     private ResponseEntity deleteTeamWithGeneralTeacher(int id, String token) {
 
-        Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
+        Teacher teacher = teacherRepository.findByEmail(servicesTools.extractEmailFromToken(token));
 
         if (teacher.haveTheTeam(id)) {
 
             Team team = teamRepository.findById(id);
             teamRepository.delete(team);
-            return createResponseEntity(HttpStatus.OK, "Team delete Ok");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    "Team delete Ok");
         } else {
-            return createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY, "Teacher doesn´t have the team");
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.UNPROCESSABLE_ENTITY,
+                    "Teacher doesn´t have the team");
         }
 
     }
@@ -155,39 +183,5 @@ public class TeamService {
                 teacher
         );
     }
-
-
-    private ResponseEntity createResponseEntity(HttpStatus status, String bodyMessage) {
-
-        return ResponseEntity
-                .status(status)
-                .body(bodyMessage);
-
-    }
-
-    private boolean existsTeamName(Map<String, Object> teamData) {
-
-        return teamRepository.existsByName((String) teamData.get("name"));
-    }
-
-    private String extractEmailFromToken(String token) {
-
-        System.out.println(token);
-        String dato = token;
-        dato = dato.replace("Bearer ", "");
-        System.out.println(dato);
-        return jwtUtil.extractUsername(dato);
-
-
-    }
-
-    private boolean isUserAdmin(String token) {
-
-        AuthenticationRequest authenticationRequest = userRepository.findByUsername(extractEmailFromToken(token));
-        return authenticationRequest.getUserRole() == UserRole.administator;
-
-
-    }
-
 
 }
