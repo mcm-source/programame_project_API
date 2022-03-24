@@ -147,7 +147,7 @@
                     <span class="glyphicon glyphicon-pencil icon-brown" aria-hidden="true"></span>
                   </b-button>
                   <b-button type="button" class="btn btn-default" aria-label="Left Align"
-                            v-on:click="tabla(booleanTriggers[index][1])">
+                            v-on:click=deleteSponsor(index,index2)>
                     <span class="glyphicon glyphicon-remove icon-red" aria-hidden="true"></span>
                   </b-button>
                 </td>
@@ -222,7 +222,7 @@
                 >
 
                 <button type="button" class="btn btn-default" aria-label="Left Align"
-                        v-on:click="newFormTriggerChange(index,2,null)">
+                        v-on:click=updateSponsor(index)>
                   Modificar Benefactor
                 </button>
               </div>
@@ -330,6 +330,7 @@ export default {
     return {
       show: false,
       addTeam: false,
+      currentSponsorEditing:0,
       radioButtonsCuantia: 0, //0:complexDonation, 1:simpleDonation
       comunidad: '', //Modelo de ubicación
       booleanTriggers: [[false, false, false], [false, false, false]], //editTeam, addSponsor, editSponsor x Team
@@ -341,9 +342,6 @@ export default {
     }
   },
   methods: {
-    handleClose() {
-      this.show = false;
-    },
     openNewTeamForm() {
       let x, y
       //Se cierra el resto de formularios que puedan estar abiertos
@@ -390,6 +388,7 @@ export default {
         }
         //Si se va a editar el sponsor se cargan sus datos
         if (triggerIndex == 2) {
+            this.currentSponsorEditing=sponsorIndex
           this.sponsorFormModelName=this.sponsorFormModel[0]=this.equipos[index].listSponsors[sponsorIndex].name
           if(this.equipos[index].listSponsors[sponsorIndex].simpleDonation==null){
             this.radioButtonsCuantia=0
@@ -409,8 +408,13 @@ export default {
       this.$set(this.booleanTriggers[index], triggerIndex, !this.booleanTriggers[index][triggerIndex])
 
     },
-    tabla(frase) {
-      console.log(frase)
+    secureNotNullNumbers(){
+      let i
+      for(i in this.sponsorFormModel){
+        if(this.sponsorFormModel[i].toString().length<1){
+          this.sponsorFormModel[i]=0
+        }
+      }
     },
     async getTeamsFromDB(){
       this.equipos=[]
@@ -529,13 +533,14 @@ export default {
     async createSponsor(index){
       let con
       try {
+        this.secureNotNullNumbers()
         let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam
         idTeam=this.equipos[index].id
         name=this.sponsorFormModelName
-        amountForSimpleProblem=this.sponsorFormModel[0]
-        amountForMediumProblem=this.sponsorFormModel[1]
-        amountForHardProblem=this.sponsorFormModel[2]
-        amount=this.sponsorFormModel[3]
+        amountForSimpleProblem=this.sponsorFormModel[0].toString()
+        amountForMediumProblem=this.sponsorFormModel[1].toString()
+        amountForHardProblem=this.sponsorFormModel[2].toString()
+        amount=this.sponsorFormModel[3].toString()
         if(this.radioButtonsCuantia==0){ //Cuantía compleja
           isSimpleDonation=false
           console.log({
@@ -581,7 +586,93 @@ export default {
       }catch (error){
         console.log(error)
       }
-      //this.newFormTriggerChange(index,1,null)
+      this.newFormTriggerChange(index,1,null)
+    },
+    async updateSponsor(index){
+      let con
+      try {
+        let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam, idSponsor
+        name=this.sponsorFormModelName
+        this.secureNotNullNumbers()
+        amountForSimpleProblem=this.sponsorFormModel[0].toString()
+        amountForMediumProblem=this.sponsorFormModel[1].toString()
+        amountForHardProblem=this.sponsorFormModel[2].toString()
+        amount=this.sponsorFormModel[3].toString()
+        idTeam=this.equipos[index].id
+        idSponsor=this.equipos[index].listSponsors[this.currentSponsorEditing].id
+        if(this.radioButtonsCuantia==0){ //Cuantía compleja
+          isSimpleDonation=false
+          console.log({
+              idTeam,
+              idSponsor,
+              name,
+              isSimpleDonation,
+              amountForSimpleProblem,
+              amountForMediumProblem,
+              amountForHardProblem
+            }
+          )
+          response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
+            idTeam,
+            idSponsor,
+            name,
+            isSimpleDonation,
+            amountForSimpleProblem,
+            amountForMediumProblem,
+            amountForHardProblem
+          });
+        }else if(this.radioButtonsCuantia==1){ //Cuantía simple
+          isSimpleDonation=true
+          console.log({
+              idTeam,
+              idSponsor,
+              name,
+              isSimpleDonation,
+              amount
+            }
+          )
+          response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
+            idTeam,
+            name,
+            idSponsor,
+            isSimpleDonation,
+            amount
+          });
+        }
+        console.log(response)
+        // con=await this.getTeamsFromDB() no llega aquí por el error en json
+      } catch (error) {
+        console.log(error);
+        //this.error = true;
+      }
+      this.newFormTriggerChange(index,2, null)
+      try{
+        con=await this.getTeamsFromDB()
+      }catch (error){
+        console.log(error)
+      }
+      this.addTeam=false
+    },
+    async deleteSponsor(index, index2){
+      let con
+      try {
+        let idSponsor
+        idSponsor=this.equipos[index].listSponsors[index2].id
+        console.log({
+          idSponsor
+        });
+        response=await ApiUtils.makeAuthrorizeDeleteData("/sponsor/deleteSponsor/"+idSponsor)
+        console.log(response)
+        // con=await this.getTeamsFromDB() no llega aquí por el error en json
+      } catch (error) {
+        console.log(error);
+        //this.error = true;
+      }
+      try{
+        con=await this.getTeamsFromDB()
+      }catch (error){
+        console.log(error)
+      }
     },
   },
   async mounted() {
