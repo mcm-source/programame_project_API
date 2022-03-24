@@ -7,6 +7,7 @@ import com.example.programame_project_api.entities.IssueReport;
 import com.example.programame_project_api.repositories.UserRepository;
 import com.example.programame_project_api.security.JWTUtil;
 import com.example.programame_project_api.services.UserData;
+import com.example.programame_project_api.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,12 +39,15 @@ public class AuthController {
     @Autowired
     private JWTUtil jwtUtil;
 
+    @Autowired
+    private UserService userService;
+
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
             AuthenticationRequest bloqueado= userRepository.findByUsername(request.getUsername());
-            if(!bloqueado.getBlock()) {
+
 //            Esto manda a validar el usuario introducido
                 UsernamePasswordAuthenticationToken UsuarioConPass = new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -56,9 +60,7 @@ public class AuthController {
                 UserDetails userDetails = userData.loadUserByUsername(request.getUsername());
                 String jwt = jwtUtil.generateToken(userDetails);
                 return new ResponseEntity<>(new AuthenticationResponse(jwt), headers, HttpStatus.OK);
-            }else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+
         }catch (BadCredentialsException e){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
@@ -66,114 +68,38 @@ public class AuthController {
     }
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/createUser")
-    public ResponseEntity<IssueReport> newUser(@RequestBody Map<String, Object> user) {
+    public ResponseEntity newUser(@RequestBody Map<String, Object> user,
+                                               @RequestHeader(name = "Authorization") String token) {
         try {
-            String rootUser= jwtUtil.extractUsername((String)user.get("token"));
+        return  userService.createUser(user,token);
+    }catch (BadCredentialsException e){
+        return  ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(e.getMessage());
 
-
-
-
-            AuthenticationRequest usuarioExiste = userRepository.findByUsername((String)user.get("email"));
-
-            if(user.get("password").equals(user.get("passwordRepeat")) && usuarioExiste==null && rootUser.equals("root")) {
-                AuthenticationRequest User = new AuthenticationRequest(((String) user.get("email")),
-                        ((String) user.get("password"))
-                );
-                this.userRepository.save(User);
-                return new ResponseEntity<>(HttpStatus.CREATED);
-            }else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
+    }
 
     }
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/updateUser")
-    public ResponseEntity updateUser(@RequestBody Map<String, Object> user) {
+    public ResponseEntity updateUser(@RequestBody Map<String, Object> user,
+                                     @RequestHeader(name = "Authorization") String token) {
 
-        try {
-            String rootUser= jwtUtil.extractUsername((String)user.get("token"));
-            if (userRepository.existsByUsername((String)user.get("email")) && rootUser.equals("root")) {
-
-                AuthenticationRequest usuario= new AuthenticationRequest((String)user.get("email"),(String)user.get("password"));
-                userRepository.update(usuario);
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body("Update ok");
-            } else {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body("Update has fault");
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       return  userService.updateUser(user, token);
 
 
     }
 
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @DeleteMapping("/deleteUser")
-    public ResponseEntity deleteUser(@RequestBody Map<String, Object> user) {
+    public ResponseEntity deleteUser(@RequestBody String email,
+                                     @RequestHeader(name = "Authorization") String token) {
 
 
-        try {
-            System.out.println("DASdas");
-            String rootUser= jwtUtil.extractUsername((String)user.get("token"));
-            System.out.println(rootUser);
-            AuthenticationRequest usuario = userRepository.findByUsername((String)user.get("email"));
-
-            if (usuario != null && rootUser.equals("root")) {
-                userRepository.delete(usuario);
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body("Client delete Ok");
-            } else {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body("Client not exist");
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+       return  userService.deleteUser(email, token);
     }
 
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
-    @PostMapping("/blockUser")
-    public ResponseEntity blockUser(@RequestBody Map<String, Object> user) {
 
-        try {
-            String rootUser= jwtUtil.extractUsername((String)user.get("token"));
-            if (userRepository.existsByUsername((String)user.get("email")) && rootUser.equals("root")) {
-
-                AuthenticationRequest usuario= userRepository.findByUsername((String)user.get("email"));
-                if(usuario.getBlock()){
-                    usuario.setBlock(false);
-                }else {
-                    usuario.setBlock(true);
-                }
-                userRepository.update(usuario);
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body("Update ok");
-            } else {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body("Update has fault");
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-
-    }
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @GetMapping("/listUserData")
     public ResponseEntity listUserData() {
