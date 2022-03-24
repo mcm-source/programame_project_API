@@ -36,10 +36,10 @@ public class SponsorService {
 
             Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
             int idTeam = (int) data.get("idTeam");
-
             if (teacher.haveTheTeam(idTeam)) {
                 Team team = teamRepository.findById((Integer) data.get("idTeam"));
-                sponsorRepository.save(createSponsorWithDonation(data, team));
+                Sponsor newsponsor=createSponsorWithDonation(data, team);
+                sponsorRepository.save(newsponsor);
                 teamRepository.save(team);
                 return createResponseEntity(HttpStatus.OK, "Create sponsor ok");
             } else {
@@ -152,22 +152,27 @@ public class SponsorService {
     private Sponsor createSponsorWithDonation(Map<String, Object> data, Team team) {
 
         if ((Boolean) data.get("isSimpleDonation")) {
+            System.out.println("createSponsorSimple");
+
             return new Sponsor((String) data.get("name"),
                     team,
-                    new SimpleDonation((double) data.get("amount"))
+                    new SimpleDonation(Double.parseDouble((String )data.get("amount")))
             );
 
 
         } else {
+            System.out.println("createSponsorComplex");
             return new Sponsor((String) data.get("name"),
                     team,
                     new ComplexDonation(
-                            (double) data.get("amountForSimpleProblem"),
-                            (double) data.get("amountForMediumProblem"),
-                            (double) data.get("amountForHardProblem")
+                            Double.parseDouble((String )data.get("amountForSimpleProblem")),
+                            Double.parseDouble((String )data.get("amountForMediumProblem")),
+                            Double.parseDouble((String )data.get("amountForHardProblem"))
+//                            (double) data.get("amountForSimpleProblem"),
+//                            (double) data.get("amountForMediumProblem"),
+//                            (double) data.get("amountForHardProblem")
                     ));
         }
-
 
     }
 
