@@ -153,6 +153,11 @@ public class TeamService {
                     team.setTeacher(null);
                     team.getListSponsors().forEach(sponsor -> {
                         sponsor.setTeam(null);
+                        if(sponsor.getSimpleDonation()!=null){
+                            sponsor.getSimpleDonation().setSponsor(null);
+                        }else if(sponsor.getComplexDonation()!=null){
+                            sponsor.getComplexDonation().setSponsor(null);
+                        }
                     });
                 });
 
