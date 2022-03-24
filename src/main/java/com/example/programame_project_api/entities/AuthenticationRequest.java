@@ -1,9 +1,6 @@
 package com.example.programame_project_api.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "Usuarios")
@@ -14,6 +11,7 @@ public class AuthenticationRequest {
     private String password;
     @Column(nullable = false)
     private Boolean block;
+    @Enumerated
     @Column(nullable = false)
     private UserRole userRole;
 

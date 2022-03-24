@@ -65,15 +65,17 @@ public class TeamService {
 
         try {
             if (servicesTools.isUserAdmin(token)) {
+
+                System.out.println("User is admin");
                 return updateTeamWithAdminUser(teamData);
             } else {
                 return updateTeamFromTeacher(teamData, token);
             }
 
-        } catch (Exception e) {
+       } catch (Exception e) {
             return  servicesTools.createResponseEntity(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.getMessage());
+                   e.getMessage());
         }
 
 

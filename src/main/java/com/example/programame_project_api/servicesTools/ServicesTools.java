@@ -44,7 +44,7 @@ public class ServicesTools {
     public boolean isUserAdmin(String token) {
 
         AuthenticationRequest authenticationRequest = userRepository.findByUsername(extractEmailFromToken(token));
-        return authenticationRequest.getUserRole() == UserRole.administator;
+        return authenticationRequest.getUserRole() == UserRole.ADMINISTRATOR;
 
 
     }
