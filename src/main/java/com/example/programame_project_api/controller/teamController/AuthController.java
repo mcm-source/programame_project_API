@@ -38,7 +38,7 @@ public class AuthController {
     @Autowired
     private JWTUtil jwtUtil;
 
-
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
@@ -64,7 +64,7 @@ public class AuthController {
         }
 
     }
-
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/createUser")
     public ResponseEntity<IssueReport> newUser(@RequestBody Map<String, Object> user) {
         try {
@@ -91,7 +91,7 @@ public class AuthController {
 
 
     }
-
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/updateUser")
     public ResponseEntity updateUser(@RequestBody Map<String, Object> user) {
 
@@ -117,7 +117,7 @@ public class AuthController {
 
     }
 
-
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @DeleteMapping("/deleteUser")
     public ResponseEntity deleteUser(@RequestBody Map<String, Object> user) {
 
@@ -144,7 +144,7 @@ public class AuthController {
         }
     }
 
-
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/blockUser")
     public ResponseEntity blockUser(@RequestBody Map<String, Object> user) {
 
@@ -174,7 +174,7 @@ public class AuthController {
 
 
     }
-
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @GetMapping("/listUserData")
     public ResponseEntity listUserData() {
 
