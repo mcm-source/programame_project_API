@@ -1,6 +1,7 @@
 export class TokenUtils {
   static token;
-  static username;
+  static teacherControl;
+
 
   static getToken() {
     if (!this.token) {
@@ -9,26 +10,27 @@ export class TokenUtils {
     }
     return this.token;
   }
+  static getTeacherControl(){
+    console.log(sessionStorage.getItem("teacherControl"))
+    return sessionStorage.getItem("teacherControl")
+  }
 
-  static getUsername(){
-    if (!this.username){
-      this.username=sessionStorage.getItem("username");
-      console.log(this.username)
-    }
-    return this.username
+  static setTeacherControl(value){
+    this.teacherControl=value
+    sessionStorage.setItem("teacherControl", value);
   }
 
   static saveToken(newToken) {
     this.token = newToken;
-    // this.username=username;
+    this.teacherControl=null;
     sessionStorage.setItem("token", newToken);
-    // sessionStorage.setItem("username", username);
+    sessionStorage.setItem("teacherControl", null);
   }
 
   static logOut(){
     sessionStorage.clear()
     this.token=null;
-    // this.username=null;
+    this.teacherControll=null;
   }
 
 

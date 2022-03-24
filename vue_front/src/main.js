@@ -11,7 +11,7 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import Router from "vue-router";
 import App from './App'
 import Home from "./views/Home";
-import Login from "./Views/Login";
+import AdministratorDashboard from "./Views/AdministratorDashboard/AdministratorDashboard";
 import ProfessorDashboard from "./Views/ProfessorDashboard/ProfessorDashboard";
 
 import tab from "bootstrap/js/src/tab";
@@ -34,7 +34,7 @@ Vue.use(Router);
 
 const routes = [
   { path: "/", component: Home },
-  { path: "/login", component: Login },
+  { path: "/administratorDashboard", component: AdministratorDashboard },
   { path: "/professorDashboard", component: ProfessorDashboard }
 
 ];
