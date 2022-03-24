@@ -9,13 +9,12 @@ public interface UserRepository extends CrudRepository<AuthenticationRequest, Lo
     boolean existsByUsername(String username);
 
 
-    public default void update(AuthenticationRequest user){
 
-        AuthenticationRequest userData = findByUsername(user.getUsername());
+    public default void update(AuthenticationRequest user, String oldUsername){
+
+        AuthenticationRequest userData = findByUsername(oldUsername);
         userData.setUsername(userData.getUsername());
         userData.setPassword(user.getPassword());
-
-
         save(userData);
 
     }

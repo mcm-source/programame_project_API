@@ -9,8 +9,6 @@ public class AuthenticationRequest {
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
-    private Boolean block;
     @Enumerated
     @Column(nullable = false)
     private UserRole userRole;
@@ -18,15 +16,10 @@ public class AuthenticationRequest {
     public AuthenticationRequest() {
     }
 
-    public AuthenticationRequest(String username, String password) {
+    public AuthenticationRequest(String username, String password, UserRole userRole) {
         this.username = username;
         this.password = password;
-        this.block = false;
-    }
-    public AuthenticationRequest(String username, String password,Boolean block) {
-        this.username = username;
-        this.password = password;
-        this.block = block;
+        this.userRole = userRole;
     }
 
     public String getPassword() {
@@ -35,14 +28,6 @@ public class AuthenticationRequest {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public Boolean getBlock() {
-        return block;
-    }
-
-    public void setBlock(Boolean block) {
-        this.block = block;
     }
 
     public String getUsername() {
