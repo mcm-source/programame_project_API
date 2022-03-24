@@ -5,6 +5,7 @@ import com.example.programame_project_api.repositories.SponsorRepository;
 import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.TeamRepository;
 import com.example.programame_project_api.security.JWTUtil;
+import com.example.programame_project_api.servicesTools.ServicesTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +27,8 @@ public class TeacherService {
     private TeamRepository teamRepository;
     @Autowired
     private SponsorRepository sponsorRepository;
+    @Autowired
+    private ServicesTools servicesTools;
 
 
     public ResponseEntity listDataFromTeacher(String token) {
@@ -67,12 +70,41 @@ public class TeacherService {
                     .body(containerOverallTable);
 
         } catch (Exception e) {
-            return createResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            return createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
         }
 
 
     }
 
+
+    public ResponseEntity listTeacherData(String token) {
+
+        try {
+
+            if (servicesTools.isUserAdmin(token)) {
+                List<Teacher> listTeachers = teacherRepository.findAll();
+                for (Teacher teacher: listTeachers){
+                    teacher.setListTeams(null);
+                }
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(listTeachers);
+            } else {
+                return  servicesTools.createResponseEntity(
+                        HttpStatus.FORBIDDEN,
+                        "User doesn´t have permissions");
+            }
+
+        } catch (Exception e) {
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+
+
+    }
 
     private ContainerOverallTable doContainerDataForSimpleDonation(Sponsor sponsor) {
 
