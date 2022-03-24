@@ -67,8 +67,6 @@ export default {
     try{
       const res = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForOverallTable")
       this.tableRows=res
-      console.log(res)
-      console.log(res.data())
     }catch(error){
       console.log(error)
     }
