@@ -21,8 +21,7 @@ public class Team {
     @Column(nullable = false)
     private String location;
 
-    @Transient
-    private double totalAcount;
+
 
     @ManyToOne
     private Teacher teacher;
@@ -104,11 +103,5 @@ public class Team {
 
 
 
-    public double getTotalAcount() {
-        return totalAcount;
-    }
 
-    public void setTotalAcount(double totalAcount) {
-        this.totalAcount = totalAcount;
-    }
 }

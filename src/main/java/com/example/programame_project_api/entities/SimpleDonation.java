@@ -18,12 +18,6 @@ public class SimpleDonation {
     @Column(nullable = false)
     private double amount;
 
-
-
-
-
-
-
     @OneToOne(  mappedBy = "simpleDonation", fetch = FetchType.LAZY)
     private Sponsor sponsor;
 

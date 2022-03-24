@@ -28,7 +28,6 @@ public class TeacherController {
 
     }
 
-
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @GetMapping("/listTeacherData")
     public ResponseEntity listTeacherDataForAdminUser(@RequestHeader(name="Authorization") String token) {

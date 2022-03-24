@@ -1,5 +1,6 @@
 package com.example.programame_project_api.services;
 
+import com.example.programame_project_api.entities.Sponsor;
 import com.example.programame_project_api.entities.Teacher;
 import com.example.programame_project_api.entities.Team;
 import com.example.programame_project_api.repositories.TeacherRepository;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -38,22 +40,22 @@ public class TeamService {
             if (teacher != null) {
                 if (!servicesTools.existsTeamName(teamData)) {
                     teamRepository.save(createTeam(teamData, teacher));
-                    return  servicesTools.createResponseEntity(
+                    return servicesTools.createResponseEntity(
                             HttpStatus.OK,
                             "Create team ok");
                 } else {
-                    return  servicesTools.createResponseEntity(
+                    return servicesTools.createResponseEntity(
                             HttpStatus.NOT_ACCEPTABLE,
                             "Team name already exist");
                 }
             } else {
-                return  servicesTools.createResponseEntity(
+                return servicesTools.createResponseEntity(
                         HttpStatus.UNPROCESSABLE_ENTITY,
                         "Teacher not exist");
             }
 
         } catch (Exception e) {
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e.getMessage());
 
@@ -72,10 +74,10 @@ public class TeamService {
                 return updateTeamFromTeacher(teamData, token);
             }
 
-       } catch (Exception e) {
-            return  servicesTools.createResponseEntity(
+        } catch (Exception e) {
+            return servicesTools.createResponseEntity(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                   e.getMessage());
+                    e.getMessage());
         }
 
 
@@ -88,11 +90,11 @@ public class TeamService {
 
         if (teamRepository.existsById(idTeam)) {
             teamRepository.update(idTeam, teamData);
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.OK,
                     "Update team ok");
         } else {
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Team doesn´t exist");
         }
@@ -108,11 +110,11 @@ public class TeamService {
 
         if (teacher.haveTheTeam(idTeam)) {
             teamRepository.update(idTeam, teamData);
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.OK,
                     "Update team ok");
         } else {
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Teacher doesn´t have the team");
         }
@@ -130,7 +132,40 @@ public class TeamService {
                 return deleteTeamWithGeneralTeacher(id, token);
             }
         } catch (Exception e) {
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+
+
+    }
+
+
+    public ResponseEntity getDataOfTeamByIdOfTeacher(int id, String token) {
+
+        try {
+
+            if (servicesTools.isUserAdmin(token)) {
+                Teacher teacher = teacherRepository.findById(id);
+                List<Team> listTeams = teacher.getListTeams();
+
+                listTeams.forEach(team -> {
+                    team.setTeacher(null);
+                    team.getListSponsors().forEach(sponsor -> {
+                        sponsor.setTeam(null);
+                    });
+                });
+
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(listTeams);
+            } else {
+                return servicesTools.createResponseEntity(
+                        HttpStatus.FORBIDDEN,
+                        "User doesn´t have permissions");
+            }
+        } catch (Exception e) {
+            return servicesTools.createResponseEntity(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     e.getMessage());
         }
@@ -144,11 +179,11 @@ public class TeamService {
         if (teamRepository.existsById(id)) {
             Team team = teamRepository.findById(id);
             teamRepository.delete(team);
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.OK,
                     "Team delete Ok");
         } else {
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Team doesn´t exist");
         }
@@ -164,11 +199,11 @@ public class TeamService {
 
             Team team = teamRepository.findById(id);
             teamRepository.delete(team);
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.OK,
                     "Team delete Ok");
         } else {
-            return  servicesTools.createResponseEntity(
+            return servicesTools.createResponseEntity(
                     HttpStatus.UNPROCESSABLE_ENTITY,
                     "Teacher doesn´t have the team");
         }

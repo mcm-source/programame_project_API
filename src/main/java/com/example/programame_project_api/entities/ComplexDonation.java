@@ -44,8 +44,6 @@ public class ComplexDonation {
         return id;
     }
 
-
-
     public double getAmountForSimpleProblem() {
         return amountForSimpleProblem;
     }

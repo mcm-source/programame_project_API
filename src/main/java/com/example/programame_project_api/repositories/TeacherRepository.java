@@ -8,5 +8,6 @@ import java.util.List;
 public interface TeacherRepository extends CrudRepository<Teacher,Long> {
 
     Teacher findByEmail(String email);
+    Teacher findById(long id);
     List<Teacher> findAll();
 }
