@@ -36,6 +36,24 @@ public class TeacherController {
 
     }
 
+    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
+    @GetMapping("/getTeacherName")
+    public ResponseEntity getTeacherNameFromToken(@RequestHeader(name="Authorization") String token) {
+
+        return  teacherService.getNameOfTeacherFromToken(token);
+
+    }
+
+
+    @CrossOrigin(origins = {"http://localhost:3001", "http://localhost:8080"})
+    @GetMapping("/getTeacherNameWithId/{id}")
+    public ResponseEntity getTeacherNameFromId(@PathVariable("id") int id,
+                                                      @RequestHeader(name = "Authorization") String token) {
+
+        return teacherService.getNameOfTeacherFromId(id, token);
+
+    }
+
 
 
 }

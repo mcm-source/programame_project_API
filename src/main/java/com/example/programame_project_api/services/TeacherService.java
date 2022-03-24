@@ -106,6 +106,49 @@ public class TeacherService {
 
     }
 
+    public ResponseEntity getNameOfTeacherFromToken(String token){
+
+        try {
+
+          Teacher teacher = teacherRepository.findByEmail(extractEmailFromToken(token));
+          return     servicesTools.createResponseEntity(
+                    HttpStatus.OK,
+                    teacher.getName());
+
+
+        } catch (Exception e) {
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+    }
+
+    public ResponseEntity getNameOfTeacherFromId(int id, String token){
+
+        try {
+
+            Teacher teacher = teacherRepository.findById(id);
+            if (teacher !=null){
+                return     servicesTools.createResponseEntity(
+                        HttpStatus.OK,
+                        teacher.getName());
+            }else {
+                return servicesTools.createResponseEntity(
+                        HttpStatus.UNPROCESSABLE_ENTITY,
+                        "Teacher doesn´t exists");
+
+            }
+
+
+        } catch (Exception e) {
+            return  servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+    }
+
+
+
     private ContainerOverallTable doContainerDataForSimpleDonation(Sponsor sponsor) {
 
         SimpleDonation simpleDonation = sponsor.getSimpleDonation();
