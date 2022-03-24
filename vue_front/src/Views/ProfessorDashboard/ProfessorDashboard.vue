@@ -426,11 +426,7 @@ export default {
           response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
           //no sería necesario usar auth para guardar los datos, pero así quedarían disponibles
           this.equipos=response
-          console.log(this.equipos)
-          console.log(this.equipos[0])
-          console.log(response.data()) //No muestra sin entrar en error
-          // console.log(this.equipos.data())
-          if(this.equipos=null){
+          if(this.equipos==null){
             console.log('no hay equipos')
           }
         } catch (error) {
@@ -462,7 +458,6 @@ export default {
           schoolName,
           location
         });
-        console.log(response)
       } catch (error) {
         console.log(error);
         //this.error = true;
@@ -497,8 +492,6 @@ export default {
           schoolName,
           location
         });
-        console.log(response)
-        // con=await this.getTeamsFromDB() no llega aquí por el error en json
       } catch (error) {
         console.log(error);
         //this.error = true;
@@ -711,10 +704,7 @@ export default {
           response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
           //no sería necesario usar auth para guardar los datos, pero así quedarían disponibles
           this.equipos=response
-          console.log(this.equipos)
-          console.log(this.equipos[0])
-          console.log(response.data()) //No muestra sin entrar en error
-          if(this.equipos=null){
+          if(this.equipos==null){
             console.log('no hay equipos')
           }
         } catch (error) {
