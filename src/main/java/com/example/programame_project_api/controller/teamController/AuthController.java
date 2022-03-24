@@ -68,11 +68,16 @@ public class AuthController {
     }
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/createUser")
-    public ResponseEntity<IssueReport> newUser(@RequestBody Map<String, Object> user,
+    public ResponseEntity newUser(@RequestBody Map<String, Object> user,
                                                @RequestHeader(name = "Authorization") String token) {
-
+        try {
         return  userService.createUser(user,token);
+    }catch (BadCredentialsException e){
+        return  ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(e.getMessage());
 
+    }
 
     }
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
