@@ -265,6 +265,7 @@ export default {
         passwordRepeat=this.userFormModel[3]
         isPasswordChange=this.editingPassword
         id=this.dbRows[index].id
+        console.log(id)
         if(!this.editingPassword){
           continuar=true
         }else{
@@ -276,6 +277,14 @@ export default {
           }
         }
         if (continuar){
+          console.log({
+            id,
+            isPasswordChange,
+            email,
+            password,
+            passwordRepeat,
+            name
+          })
           response=await ApiUtils.makeAuthrorizePost("/auth/updateUser", {
             id,
             isPasswordChange,
@@ -335,8 +344,13 @@ export default {
       //Este método devuelve a home si no hay sesión iniciada
       if(TokenUtils.getToken()==null){
         this.$router.push("/");
-      }else{
-        response=this.getUsersFromDB()
+      }else{ //Si no es admin lo devuelve a home también
+        const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+        if(resAdmin=="true"){
+          response=this.getUsersFromDB()
+        }else{
+          this.$router.push("/");
+        }
       }
     } catch (error) {
       console.log(error);

@@ -188,7 +188,6 @@ public class UserService {
 
 
     private void doUpdateOfDataUserWithPassword(Map<String, Object> user) {
-
         Teacher teacher = teacherRepository.findById((int) user.get("id"));
         updatePassword((String) user.get("password"), teacher.getEmail());
         updateUsername((String) user.get("email"), teacher.getEmail());
@@ -203,7 +202,6 @@ public class UserService {
     }
 
     private boolean isPasswordDataOk(Map<String, Object> user) {
-
         if (user.get("password").equals(user.get("passwordRepeat"))) {
             return true;
         } else {
@@ -240,12 +238,19 @@ public class UserService {
 
     }
 
+    private void updateUsernameAndPassword(String username, String password, String oldUsername){
+        AuthenticationRequest userData = userRepository.findByUsername(oldUsername);
+        userData.setUsername(username);
+        userData.setPassword(password);
+        userRepository.save(userData);
+    }
+
     private ResponseEntity createUserWithAdminRole(Map<String, Object> user) {
 
         AuthenticationRequest userData = new AuthenticationRequest(
                 (String) user.get("email"),
                 (String) user.get("password"),
-                UserRole.COMMONUSER);
+                UserRole.ADMINISTRATOR);
         userRepository.save(userData);
         return new ResponseEntity(HttpStatus.CREATED);
 

@@ -701,7 +701,19 @@ export default {
       if(TokenUtils.getToken()==null){
         this.$router.push("/");
       }else{
-        const r=this.getTeamsFromDB()
+        //Si es admin que no viene del dashboard de administración también lo echa
+        const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+        if(resAdmin=="true"){
+          if(TokenUtils.getTeacherControl().toString()=="null"){
+            this.$router.push("/");
+          }else{
+            const r=this.getTeamsFromDB()
+          }
+        }else{
+          TokenUtils.setTeacherControl(null)
+          const r=this.getTeamsFromDB()
+        }
+
       }
     } catch (error) {
       console.log(error);

@@ -41,10 +41,10 @@
           <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="login" v-show="userLoged==null">
             <span class="glyphicon glyphicon-user" aria-hidden="true"> Entrar</span>
           </button>
-        <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="goToTeams"v-show="userLoged!=null">
+        <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="goToTeams"v-show="userLoged!=null && userAdmin==false">
           Mis Equipos
         </button>
-        <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="goToAdministrator"v-show="userLoged!=null">
+        <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="goToAdministrator"v-show="userLoged!=null && userAdmin==true">
           Profesores y control
         </button>
           <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="salir"v-show="userLoged!=null">
@@ -81,6 +81,7 @@ export default {
     usernameForm: "",
     passwordForm: "",
     userLoged: null,
+    userAdmin:false
   }),
   methods: {
     async login(){
@@ -104,8 +105,15 @@ export default {
         console.log("From token utils: ", TokenUtils.getToken());
         // console.log("From token utils user: ", TokenUtils.getUsername());
         this.userLoged=this.usernameForm
+        const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
         this.show=false
-        this.goToTeams()
+        if(resAdmin=="true"){
+          this.userAdmin=true
+          this.goToAdministrator()
+        }else{
+          this.userAdmin=false
+          this.goToTeams()
+        }
       } catch (error) {
         console.log(error);
         this.error = true;
@@ -116,6 +124,7 @@ export default {
       try {
         TokenUtils.logOut()
         this.userLoged=null
+        this.userAdmin=false
         this.usernameForm=""
         this.passwordForm=""
         this.show=false
@@ -129,19 +138,25 @@ export default {
       this.show=false
 
         this.$router.push("/professorDashboard").catch(()=>{
-          console.log('recargarPag')
           window.location.reload()})
 
       // this.$router.push("/professorDashboard");
     },
     goToAdministrator(){
       this.show=false
-      this.$router.push("/administratorDashboard");
+      this.$router.push("/administratorDashboard").catch(()=>{
+        window.location.reload()});
     },
   }, async mounted(){
     if (TokenUtils.getToken()!==null){
       const res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
       this.userLoged=res
+      const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+      if(resAdmin=="true"){
+        this.userAdmin=true
+      }else{
+        this.userAdmin=false
+      }
     }
   }
 };
