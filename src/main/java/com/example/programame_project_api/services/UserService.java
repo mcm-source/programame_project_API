@@ -61,26 +61,23 @@ public class UserService {
 
         try {
 
+            int idUser = (int) user.get("id");
             if (servicesTools.isUserAdmin(token)) {
-                if (isUserDataOk(user)) {
-                    if (!hasUserRoleAdmin((String) user.get("email"))) {
+                if (teacherRepository.existsById(idUser)) {
+                    if (!hasUserRoleAdmin(getEmailFromTeacher(idUser))) {
                         return updateUserAndTeacher(user);
                     } else {
-                        return servicesTools.createResponseEntity(
-                                HttpStatus.FORBIDDEN,
+                        return servicesTools.createResponseEntity(HttpStatus.FORBIDDEN,
                                 "Users with the admin role cannot be updated");
                     }
                 } else {
-                    return servicesTools.createResponseEntity(
-                            HttpStatus.FORBIDDEN,
-                            "Incorrect data");
+                    return servicesTools.createResponseEntity(HttpStatus.FORBIDDEN,
+                            "User doesn´t exists");
                 }
             } else {
-                return servicesTools.createResponseEntity(
-                        HttpStatus.FORBIDDEN,
+                return servicesTools.createResponseEntity(HttpStatus.FORBIDDEN,
                         "User doesn´t have permissions");
             }
-
         } catch (Exception e) {
             return servicesTools.createResponseEntity(
                     HttpStatus.INTERNAL_SERVER_ERROR,
@@ -140,7 +137,6 @@ public class UserService {
                 (String) user.get("password"),
                 UserRole.COMMONUSER);
 
-
         Teacher teacher = new Teacher(
                 (String) user.get("email"),
                 (String) user.get("name"));
@@ -153,21 +149,24 @@ public class UserService {
 
     private ResponseEntity updateUserAndTeacher(Map<String, Object> user) {
 
-
-        if (isPasswordChangeAndDataisOk(user)) {
-            doUpdateOfDataUser(user);
-            return servicesTools.createResponseEntity(
-                    HttpStatus.OK,
-                    "Update user ok");
+        if ((boolean) user.get("isPasswordChange")) {
+            if (isPasswordDataOk(user)) {
+                doUpdateOfDataUserWithPassword(user);
+                return servicesTools.createResponseEntity(HttpStatus.OK,
+                        "Update user ok");
+            } else {
+                return servicesTools.createResponseEntity(HttpStatus.UNPROCESSABLE_ENTITY,
+                        "Passwords do not match");
+            }
         } else {
-            return servicesTools.createResponseEntity(
-                    HttpStatus.UNPROCESSABLE_ENTITY,
-                    "Passwords do not match");
+            doUpdateOfDataUser(user);
+            return servicesTools.createResponseEntity(HttpStatus.OK,
+                    "Update user ok");
         }
     }
 
 
-    private void doUpdateOfDataUser(Map<String, Object> user) {
+    private void doUpdateOfDataUserWithPassword(Map<String, Object> user) {
 
         Teacher teacher = teacherRepository.findById((int) user.get("id"));
         updatePassword((String) user.get("password"), teacher.getEmail());
@@ -175,19 +174,32 @@ public class UserService {
         teacherRepository.update(user, teacher.getEmail());
     }
 
+    private void doUpdateOfDataUser(Map<String, Object> user) {
 
-    private boolean isPasswordChangeAndDataisOk(Map<String, Object> user) {
+        Teacher teacher = teacherRepository.findById((int) user.get("id"));
+        updateUsername((String) user.get("email"), teacher.getEmail());
+        teacherRepository.update(user, teacher.getEmail());
+    }
 
-        if ((boolean) user.get("isPasswordChange")) {
-            if (user.get("password").equals(user.get("passwordRepeat"))) {
-                return true;
-            } else {
-                return false;
-            }
-        } else {
+    private boolean isPasswordDataOk(Map<String, Object> user) {
+
+        if (user.get("password").equals(user.get("passwordRepeat"))) {
             return true;
+        } else {
+            return false;
         }
 
+
+    }
+
+    private String getEmailFromTeacher(int id) {
+
+        Teacher teacher = teacherRepository.findById(id);
+        if (teacher != null) {
+            return teacher.getEmail();
+        } else {
+            return "";
+        }
     }
 
 
@@ -199,7 +211,6 @@ public class UserService {
 
     }
 
-
     private void updatePassword(String password, String oldUsername) {
 
         AuthenticationRequest userData = userRepository.findByUsername(oldUsername);
@@ -207,7 +218,6 @@ public class UserService {
         userRepository.save(userData);
 
     }
-
 
     private ResponseEntity createUserWithAdminRole(Map<String, Object> user) {
 

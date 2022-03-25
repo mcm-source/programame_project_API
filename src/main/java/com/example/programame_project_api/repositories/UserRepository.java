@@ -7,6 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface UserRepository extends CrudRepository<AuthenticationRequest, Long> {
     AuthenticationRequest findByUsername(String username);
     boolean existsByUsername(String username);
+    boolean existsById(long id);
 
 
 

@@ -5,7 +5,11 @@ import javax.persistence.*;
 @Entity
 @Table(name = "Usuarios")
 public class AuthenticationRequest {
+
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private  long id;
+    @Column(unique = true, nullable = false)
     private String username;
     @Column(nullable = false)
     private String password;

@@ -9,6 +9,7 @@ import java.util.Map;
 
 public interface TeacherRepository extends CrudRepository<Teacher,Long> {
 
+    boolean existsById(long id);
     Teacher findByEmail(String email);
     Teacher findById(long id);
     List<Teacher> findAll();
