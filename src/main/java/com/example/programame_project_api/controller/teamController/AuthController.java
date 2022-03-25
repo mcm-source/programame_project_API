@@ -70,14 +70,9 @@ public class AuthController {
     @PostMapping("/createUser")
     public ResponseEntity newUser(@RequestBody Map<String, Object> user,
                                                @RequestHeader(name = "Authorization") String token) {
-        try {
-        return  userService.createUser(user,token);
-    }catch (BadCredentialsException e){
-        return  ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(e.getMessage());
 
-    }
+        return  userService.createUser(user,token);
+
 
     }
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
@@ -99,28 +94,14 @@ public class AuthController {
        return  userService.deleteUser(email, token);
     }
 
+    @CrossOrigin(origins = {"http://localhost:3001", "http://localhost:8080"})
+    @GetMapping("/isUserAdmin")
+    public ResponseEntity isUserAdmin(@RequestHeader(name = "Authorization") String token) {
 
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
-    @GetMapping("/listUserData")
-    public ResponseEntity listUserData() {
+        return userService.isUserAdmin(token);
 
-        try {
-
-            List<AuthenticationRequest> userList = (List<AuthenticationRequest>) userRepository.findAll();
-
-
-            if (userList != null ) {
-
-                return ResponseEntity
-                        .status(HttpStatus.OK)
-                        .body(userList);
-            } else {
-                return ResponseEntity
-                        .status(HttpStatus.NOT_FOUND)
-                        .body("Data not avaible");
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
+
+
+
 }

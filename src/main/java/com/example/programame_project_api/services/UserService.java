@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Map;
 
 @Service
@@ -108,6 +107,28 @@ public class UserService {
                         "User doesn´t have permissions");
             }
 
+        } catch (Exception e) {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+    }
+
+    public ResponseEntity isUserAdmin(String token) {
+
+        try {
+
+            boolean isUserAdmin = false;
+            if (servicesTools.isUserAdmin(token)) {
+                isUserAdmin = true;
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(isUserAdmin);
+            } else {
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(isUserAdmin);
+            }
         } catch (Exception e) {
             return servicesTools.createResponseEntity(
                     HttpStatus.INTERNAL_SERVER_ERROR,
