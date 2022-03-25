@@ -149,14 +149,21 @@ export default {
     },
   }, async mounted(){
     if (TokenUtils.getToken()!==null){
-      const res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
-      this.userLoged=res
-      const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
-      if(resAdmin=="true"){
-        this.userAdmin=true
-      }else{
+      try{
+        const res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
+        this.userLoged=res
+        const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+        if(resAdmin=="true"){
+          this.userAdmin=true
+        }else{
+          this.userAdmin=false
+        }
+      }catch(error){
+        console.log(error)
+        this.userLoged=null
         this.userAdmin=false
       }
+
     }
   }
 };
