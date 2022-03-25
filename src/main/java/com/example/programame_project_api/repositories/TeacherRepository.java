@@ -5,6 +5,7 @@ import com.example.programame_project_api.entities.Teacher;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TeacherRepository extends CrudRepository<Teacher,Long> {
 
@@ -12,11 +13,11 @@ public interface TeacherRepository extends CrudRepository<Teacher,Long> {
     Teacher findById(long id);
     List<Teacher> findAll();
 
-    public default void update(Teacher teacher, String oldEmail){
+    public default void update(Map<String, Object> user, String oldEmail){
 
         Teacher teacherData = findByEmail(oldEmail);
-        teacherData.setEmail(teacher.getEmail());
-        teacherData.setName(teacher.getName());
+        teacherData.setEmail( (String) user.get("email"));
+        teacherData.setName((String) user.get("name"));
         save(teacherData);
 
     }
