@@ -67,6 +67,19 @@ export class ApiUtils {
     return await response.json();
   }
 
+  static async makeAuthrorizeGetDataSimple(endPoint) {
+    console.log(endPoint);
+    let aut = "Bearer " + TokenUtils.getToken();
+    console.log(this.DOMAIN_URL_IN_USE+endPoint);
+    const response = await fetch(this.DOMAIN_URL_IN_USE+endPoint, {
+      method: "GET",
+      headers: {
+        Authorization: aut
+      },
+    });
+    return response.text();
+  }
+
   static async makeAuthrorizeDeleteData(endPoint) {
     console.log(endPoint);
     let aut = "Bearer " + TokenUtils.getToken();
@@ -84,14 +97,14 @@ export class ApiUtils {
     TokenUtils.getToken();
     let aut = "Bearer " + TokenUtils.getToken();
     console.log(this.DOMAIN_URL_IN_USE+endPoint);
-    const response = await(await fetch(this.DOMAIN_URL_IN_USE+endPoint, {
+    const response = await(fetch(this.DOMAIN_URL_IN_USE+endPoint, {
       method: "DELETE",
       headers: {
         Authorization: aut,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(object),
-    })).json()
+      body: (object.email),
+    }))
     return response.status;
   }
 

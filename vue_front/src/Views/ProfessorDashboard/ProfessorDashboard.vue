@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col text-left">
 
-        <h2>Bienvenido/a profesor/a
+        <h2>Panel del profesor de {{professorLogedName}}
           <button type="button" class="btnAzul float-right" aria-label="Left Align" v-on:click=openNewTeamForm()>
             Añadir Equipo
           </button>
@@ -331,6 +331,7 @@ export default {
   components: { ConfirmDialogue },
   data() {
     return {
+      professorLogedName:"",
       show: false,
       addTeam: false,
       currentSponsorEditing:0,
@@ -421,15 +422,18 @@ export default {
     },
     async getTeamsFromDB(){
       this.equipos=[]
-      let t
+      let t, professorName
       try {
         //Si no es admin accediendo a otro listado
         if(TokenUtils.getTeacherControl().toString()=="null"){
           response = await ApiUtils.makeAuthrorizeGetData("/teacher/listDataForTeamsTable")
+          professorName=await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
 
         }else{ //Admin que viene de dashboard de administración
           response = await ApiUtils.makeAuthrorizeGetData("/team/getTeamData/"+TokenUtils.getTeacherControl())
+          professorName= await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherNameWithId/"+TokenUtils.getTeacherControl())
         }
+        this.professorLogedName=professorName
         this.equipos=response
         if(this.equipos==null){
           console.log('no hay equipos')
@@ -759,14 +763,10 @@ export default {
 }
 
 .intern_form {
-  /*float: bottom;*/
   width: 100%;
-  /*height: 80px;*/
   display: grid;
   grid-template-columns: 1fr;
   font-size: medium;
-  /*border-radius: 4px;*/
-  /*box-shadow: 0 1px 6px rgba(0,0,0,.2);*/
   padding: 10px;
 }
 

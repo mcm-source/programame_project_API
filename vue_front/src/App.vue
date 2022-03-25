@@ -138,9 +138,10 @@ export default {
       this.show=false
       this.$router.push("/administratorDashboard");
     },
-  }, mounted(){
+  }, async mounted(){
     if (TokenUtils.getToken()!==null){
-      this.userLoged="FromReload"
+      const res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
+      this.userLoged=res
     }
   }
 };
