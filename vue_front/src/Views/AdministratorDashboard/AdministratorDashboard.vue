@@ -257,16 +257,47 @@ export default {
     },
     async editUser(index){
       try{
-        let name, email, password, passwordRepeat, hasUserAdminRole
+        let continuar=false
+        let response,name, email, password, passwordRepeat, isPasswordChange, id
         name=this.userFormModel[0]
         email=this.userFormModel[1]
-        hasUserAdminRole=this.userFormModelRole
+        password=this.userFormModel[2]
+        passwordRepeat=this.userFormModel[3]
+        isPasswordChange=this.editingPassword
+        id=this.dbRows[index].id
+        console.log(id)
         if(!this.editingPassword){
-          password=this.userFormModel[2]
-          passwordRepeat=this.userFormModel[3]
+          continuar=true
         }else{
-          password=this.userFormModel[2]
-          passwordRepeat=this.userFormModel[3]
+          if((this.userFormModel[2].length>3)&&(this.userFormModel[2]==this.userFormModel[3])){
+            continuar=true
+          }else{
+            alert('Las contraseñas no coinciden o tienen menos de 4 caracteres.')
+            continuar=false
+          }
+        }
+        if (continuar){
+          console.log({
+            id,
+            isPasswordChange,
+            email,
+            password,
+            passwordRepeat,
+            name
+          })
+          response=await ApiUtils.makeAuthrorizePost("/auth/updateUser", {
+            id,
+            isPasswordChange,
+            email,
+            password,
+            passwordRepeat,
+            name
+          });
+          console.log(response)
+          if(response==200){
+            console.log("Modificado correctamente")
+            this.setTriggersToFalse()
+          }
         }
       }catch(error){
         console.log(error)
@@ -313,8 +344,13 @@ export default {
       //Este método devuelve a home si no hay sesión iniciada
       if(TokenUtils.getToken()==null){
         this.$router.push("/");
-      }else{
-        response=this.getUsersFromDB()
+      }else{ //Si no es admin lo devuelve a home también
+        const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+        if(resAdmin=="true"){
+          response=this.getUsersFromDB()
+        }else{
+          this.$router.push("/");
+        }
       }
     } catch (error) {
       console.log(error);
