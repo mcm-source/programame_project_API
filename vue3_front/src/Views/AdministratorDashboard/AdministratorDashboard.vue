@@ -217,7 +217,8 @@ export default {
       //falta obtener rol
       this.userFormModel[0]=this.dbRows[index].name
       this.userFormModel[1]=this.dbRows[index].email
-      this.$set(this.editionFormVisionTrigger, index, true)
+      // this.$set(this.editionFormVisionTrigger, index, true)
+      this.editionFormVisionTrigger[index] =true
     },
     secureNotEmptyFields(){
       let empty=false
@@ -350,7 +351,8 @@ export default {
     setTriggersToFalse(){
       let t
       for (t in this.editionFormVisionTrigger){
-        this.$set(this.editionFormVisionTrigger, t, false)
+        // this.$set(this.editionFormVisionTrigger, t, false)
+        this.editionFormVisionTrigger[t]=false
       }
       this.addUserFormVision=false
     }

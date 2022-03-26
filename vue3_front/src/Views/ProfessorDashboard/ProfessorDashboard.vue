@@ -352,7 +352,8 @@ export default {
       try {
         for (x in this.booleanTriggers) {
           for (y in this.booleanTriggers[x]) {
-            this.$set(this.booleanTriggers[x], y, false)
+            // this.$set(this.booleanTriggers[x], y, false)
+            this.booleanTriggers[x][y]=false
           }
         }
       } catch (error) {
@@ -373,7 +374,8 @@ export default {
       if (!this.booleanTriggers[index][triggerIndex]) {
         for (x in this.booleanTriggers) {
           for (y in this.booleanTriggers[x]) {
-            this.$set(this.booleanTriggers[x], y, false)
+            // this.$set(this.booleanTriggers[x], y, false)
+            this.booleanTriggers[x][y]= false
           }
         }
         this.addTeam=false
@@ -409,7 +411,8 @@ export default {
           }
         }
       }
-      this.$set(this.booleanTriggers[index], triggerIndex, !this.booleanTriggers[index][triggerIndex])
+      // this.$set(this.booleanTriggers[index], triggerIndex, !this.booleanTriggers[index][triggerIndex])
+      this.booleanTriggers[index][triggerIndex]=!this.booleanTriggers[index][triggerIndex]
 
     },
     secureNotNullNumbers(){
