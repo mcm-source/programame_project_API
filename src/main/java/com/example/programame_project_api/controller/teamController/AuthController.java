@@ -52,9 +52,9 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
 
-          //  AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"), UserRole.ADMINISTRATOR);
-
-         //   userRepository.save(user);
+//            AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"), UserRole.ADMINISTRATOR);
+//
+//            userRepository.save(user);
 
                 UsernamePasswordAuthenticationToken UsuarioConPass = new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
