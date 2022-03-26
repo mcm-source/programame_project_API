@@ -4,7 +4,7 @@
       <div class="col text-left">
 
         <h2>Panel del profesor de {{professorLogedName}}
-          <button type="button" class="btnAzul float-right" aria-label="Left Align" v-on:click=openNewTeamForm()>
+          <button type="button" class="btnAzul float-right" aria-label="Left Align" v-show="!limitedAdminButtons" v-on:click=openNewTeamForm()>
             Añadir Equipo
           </button>
         </h2>
@@ -230,7 +230,7 @@
             </div>
 
             <h4>
-              <button type="button" class="btnAzulPequeño " aria-label="Left Align"
+              <button type="button" class="btnAzulPequeño " aria-label="Left Align" v-show="!limitedAdminButtons"
                       v-on:click="newFormTriggerChange(index,1, null)">
                 Añadir Patrocinador
               </button>
@@ -335,6 +335,7 @@ export default {
       show: false,
       addTeam: false,
       currentSponsorEditing:0,
+      limitedAdminButtons:false,
       radioButtonsCuantia: 0, //0:complexDonation, 1:simpleDonation
       comunidad: '', //Modelo de ubicación
       booleanTriggers: [[false, false, false], [false, false, false]], //editTeam, addSponsor, editSponsor x Team
@@ -420,6 +421,47 @@ export default {
         }
       }
     },
+    secureNotEmptyTeamFields(){
+      let empty=false
+      let f
+      for (f in this.teamFormModel){
+        if(this.teamFormModel[f]==""){
+          empty=true
+        }
+      }
+      if (this.comunidad==""){
+        empty=true
+      }
+      if (empty){
+        alert("No se admiten campos vacíos.")
+      }
+      return !empty
+    },
+    secureNotEmptySponsorFields(){
+      let empty=false
+      let i
+      if (this.sponsorFormModelName==""){
+        empty=true
+      }else{
+        this.secureNotNullNumbers()
+        //No se aceptan números negativos ni e
+        if(this.radioButtonsCuantia==0){ //Cuantía compleja
+          for(i=0; i<3; i++){
+            if((this.sponsorFormModel[i].toString().includes("-"))||(this.sponsorFormModel[i].toString().includes("e"))){
+              empty=true
+            }
+          }
+        }else{//Cuantía simple
+          if((this.sponsorFormModel[3].toString().includes("-"))||(this.sponsorFormModel[3].toString().includes("e"))){
+            empty=true
+          }
+        }
+      }
+      if (empty){
+        alert("No se admiten campos vacíos ni valores negativos.")
+      }
+      return !empty
+    },
     async getTeamsFromDB(){
       this.equipos=[]
       let t, professorName
@@ -447,64 +489,68 @@ export default {
         }
     },
     async createTeam(){
-      let con
-      try {
-        let name, teamMembers, schoolName, location
-        name=this.teamFormModel[0]
-        teamMembers=this.teamFormModel[1]
-        schoolName=this.teamFormModel[2]
-        location=this.comunidad
-        response=await ApiUtils.makeAuthrorizePost("/team/createTeam", {
-          name,
-          teamMembers,
-          schoolName,
-          location
-        });
-      } catch (error) {
-        console.log(error);
-        //this.error = true;
+      if(this.secureNotEmptyTeamFields()){
+        let con
+        try {
+          let name, teamMembers, schoolName, location
+          name=this.teamFormModel[0]
+          teamMembers=this.teamFormModel[1]
+          schoolName=this.teamFormModel[2]
+          location=this.comunidad
+          response=await ApiUtils.makeAuthrorizePost("/team/createTeam", {
+            name,
+            teamMembers,
+            schoolName,
+            location
+          });
+        } catch (error) {
+          console.log(error);
+          //this.error = true;
+        }
+        try{
+          con=await this.getTeamsFromDB()
+        }catch (error){
+          console.log(error)
+        }
+        this.addTeam=false
       }
-      try{
-        con=await this.getTeamsFromDB()
-      }catch (error){
-        console.log(error)
-      }
-      this.addTeam=false
     },
     async updateTeam(index){
-      let con
-      try {
-        let name, teamMembers, schoolName, location, idTeam
-        name=this.teamFormModel[0]
-        teamMembers=this.teamFormModel[1]
-        schoolName=this.teamFormModel[2]
-        location=this.comunidad
-        idTeam=this.equipos[index].id
-        console.log({
-          idTeam,
-          name,
-          teamMembers,
-          schoolName,
-          location
-        });
-        response=await ApiUtils.makeAuthrorizePost("/team/updateTeam", {
-          idTeam,
-          name,
-          teamMembers,
-          schoolName,
-          location
-        });
-      } catch (error) {
-        console.log(error);
-        //this.error = true;
+      if(this.secureNotEmptyTeamFields()){
+        let con
+        try {
+          let name, teamMembers, schoolName, location, idTeam
+          name=this.teamFormModel[0]
+          teamMembers=this.teamFormModel[1]
+          schoolName=this.teamFormModel[2]
+          location=this.comunidad
+          idTeam=this.equipos[index].id
+          console.log({
+            idTeam,
+            name,
+            teamMembers,
+            schoolName,
+            location
+          });
+          response=await ApiUtils.makeAuthrorizePost("/team/updateTeam", {
+            idTeam,
+            name,
+            teamMembers,
+            schoolName,
+            location
+          });
+        } catch (error) {
+          console.log(error);
+          //this.error = true;
+        }
+        this.newFormTriggerChange(index,0, null)
+        try{
+          con=await this.getTeamsFromDB()
+        }catch (error){
+          console.log(error)
+        }
+        this.addTeam=false
       }
-      this.newFormTriggerChange(index,0, null)
-      try{
-        con=await this.getTeamsFromDB()
-      }catch (error){
-        console.log(error)
-      }
-      this.addTeam=false
     },
     async deleteTeam(index){
       let con
@@ -540,78 +586,91 @@ export default {
       }
     },
     async createSponsor(index){
-      let con
-      try {
-        this.secureNotNullNumbers()
-        let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam
-        idTeam=this.equipos[index].id
-        name=this.sponsorFormModelName
-        amountForSimpleProblem=this.sponsorFormModel[0].toString()
-        amountForMediumProblem=this.sponsorFormModel[1].toString()
-        amountForHardProblem=this.sponsorFormModel[2].toString()
-        amount=this.sponsorFormModel[3].toString()
-        if(this.radioButtonsCuantia==0){ //Cuantía compleja
-          isSimpleDonation=false
-          console.log({
+      if(this.secureNotEmptySponsorFields()){
+        let con
+        try {
+          this.secureNotNullNumbers()
+          let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam
+          idTeam=this.equipos[index].id
+          name=this.sponsorFormModelName
+          amountForSimpleProblem=this.sponsorFormModel[0].toString()
+          amountForMediumProblem=this.sponsorFormModel[1].toString()
+          amountForHardProblem=this.sponsorFormModel[2].toString()
+          amount=this.sponsorFormModel[3].toString()
+          if(this.radioButtonsCuantia==0){ //Cuantía compleja
+            isSimpleDonation=false
+            console.log({
+                idTeam,
+                name,
+                isSimpleDonation,
+                amountForSimpleProblem,
+                amountForMediumProblem,
+                amountForHardProblem
+              }
+            )
+            response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
               idTeam,
               name,
               isSimpleDonation,
               amountForSimpleProblem,
               amountForMediumProblem,
               amountForHardProblem
-            }
-          )
-          response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
-            idTeam,
-            name,
-            isSimpleDonation,
-            amountForSimpleProblem,
-            amountForMediumProblem,
-            amountForHardProblem
-          });
-        }else if(this.radioButtonsCuantia==1){ //Cuantía simple
-          isSimpleDonation=true
-          console.log({
+            });
+          }else if(this.radioButtonsCuantia==1){ //Cuantía simple
+            isSimpleDonation=true
+            console.log({
+                idTeam,
+                name,
+                isSimpleDonation,
+                amount
+              }
+            )
+            response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
               idTeam,
               name,
               isSimpleDonation,
               amount
-            }
-          )
-          response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
-            idTeam,
-            name,
-            isSimpleDonation,
-            amount
-          });
+            });
+          }
+          console.log(response)
+        } catch (error) {
+          console.log(error);
+          //this.error = true;
         }
-        console.log(response)
-      } catch (error) {
-        console.log(error);
-        //this.error = true;
+        try{
+          con=await this.getTeamsFromDB()
+        }catch (error){
+          console.log(error)
+        }
+        this.newFormTriggerChange(index,1,null)
       }
-      try{
-        con=await this.getTeamsFromDB()
-      }catch (error){
-        console.log(error)
-      }
-      this.newFormTriggerChange(index,1,null)
     },
     async updateSponsor(index){
-      let con
-      try {
-        let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam, idSponsor
-        name=this.sponsorFormModelName
-        this.secureNotNullNumbers()
-        amountForSimpleProblem=this.sponsorFormModel[0].toString()
-        amountForMediumProblem=this.sponsorFormModel[1].toString()
-        amountForHardProblem=this.sponsorFormModel[2].toString()
-        amount=this.sponsorFormModel[3].toString()
-        idTeam=this.equipos[index].id
-        idSponsor=this.equipos[index].listSponsors[this.currentSponsorEditing].id
-        if(this.radioButtonsCuantia==0){ //Cuantía compleja
-          isSimpleDonation=false
-          console.log({
+      if(this.secureNotEmptySponsorFields()){
+        let con
+        try {
+          let isSimpleDonation, name, amountForSimpleProblem, amountForMediumProblem, amountForHardProblem, amount, idTeam, idSponsor
+          name=this.sponsorFormModelName
+          this.secureNotNullNumbers()
+          amountForSimpleProblem=this.sponsorFormModel[0].toString()
+          amountForMediumProblem=this.sponsorFormModel[1].toString()
+          amountForHardProblem=this.sponsorFormModel[2].toString()
+          amount=this.sponsorFormModel[3].toString()
+          idTeam=this.equipos[index].id
+          idSponsor=this.equipos[index].listSponsors[this.currentSponsorEditing].id
+          if(this.radioButtonsCuantia==0){ //Cuantía compleja
+            isSimpleDonation=false
+            console.log({
+                idTeam,
+                idSponsor,
+                name,
+                isSimpleDonation,
+                amountForSimpleProblem,
+                amountForMediumProblem,
+                amountForHardProblem
+              }
+            )
+            response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
               idTeam,
               idSponsor,
               name,
@@ -619,48 +678,39 @@ export default {
               amountForSimpleProblem,
               amountForMediumProblem,
               amountForHardProblem
-            }
-          )
-          response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
-            idTeam,
-            idSponsor,
-            name,
-            isSimpleDonation,
-            amountForSimpleProblem,
-            amountForMediumProblem,
-            amountForHardProblem
-          });
-        }else if(this.radioButtonsCuantia==1){ //Cuantía simple
-          isSimpleDonation=true
-          console.log({
+            });
+          }else if(this.radioButtonsCuantia==1){ //Cuantía simple
+            isSimpleDonation=true
+            console.log({
+                idTeam,
+                idSponsor,
+                name,
+                isSimpleDonation,
+                amount
+              }
+            )
+            response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
               idTeam,
-              idSponsor,
               name,
+              idSponsor,
               isSimpleDonation,
               amount
-            }
-          )
-          response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
-            idTeam,
-            name,
-            idSponsor,
-            isSimpleDonation,
-            amount
-          });
+            });
+          }
+          console.log(response)
+          // con=await this.getTeamsFromDB() no llega aquí por el error en json
+        } catch (error) {
+          console.log(error);
+          //this.error = true;
         }
-        console.log(response)
-        // con=await this.getTeamsFromDB() no llega aquí por el error en json
-      } catch (error) {
-        console.log(error);
-        //this.error = true;
+        this.newFormTriggerChange(index,2, null)
+        try{
+          con=await this.getTeamsFromDB()
+        }catch (error){
+          console.log(error)
+        }
       }
-      this.newFormTriggerChange(index,2, null)
-      try{
-        con=await this.getTeamsFromDB()
-      }catch (error){
-        console.log(error)
-      }
-      this.addTeam=false
+
     },
     async deleteSponsor(index, index2){
       let con
@@ -707,6 +757,7 @@ export default {
           if(TokenUtils.getTeacherControl().toString()=="null"){
             this.$router.push("/");
           }else{
+            this.limitedAdminButtons=true
             const r=this.getTeamsFromDB()
           }
         }else{

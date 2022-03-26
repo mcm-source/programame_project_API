@@ -219,93 +219,109 @@ export default {
       this.userFormModel[1]=this.dbRows[index].email
       this.$set(this.editionFormVisionTrigger, index, true)
     },
+    secureNotEmptyFields(){
+      let empty=false
+      if((this.userFormModel[0]=="")||(this.userFormModel[1]=="")){
+        empty=true
+      }
+      if(empty){
+        alert("No se admiten campos vacíos.")
+      }
+      return !empty
+
+    },
     async createUser(){
-      let con, response
-      try {
-        if((this.userFormModel[2].length>3)&&(this.userFormModel[2]==this.userFormModel[3])){
-          let name, email, password, passwordRepeat, hasUserAdminRole
+      if(this.secureNotEmptyFields()){
+        let con, response
+        try {
+          if((this.userFormModel[2].length>3)&&(this.userFormModel[2]==this.userFormModel[3])){
+            let name, email, password, passwordRepeat, hasUserAdminRole
+            name=this.userFormModel[0]
+            email=this.userFormModel[1]
+            password=this.userFormModel[2]
+            passwordRepeat=this.userFormModel[3]
+            hasUserAdminRole=this.userFormModelRole
+
+            response=await ApiUtils.makeAuthrorizePost("/auth/createUser", {
+              hasUserAdminRole,
+              email,
+              password,
+              passwordRepeat,
+              name
+            });
+            console.log(response)
+            if(response==201){
+              console.log("Insertado correctamente")
+              this.addUserFormVision=false
+            }
+          }else{
+            alert('Las contraseñas no coinciden o tienen menos de 4 caracteres.')
+          }
+        } catch (error) {
+          console.log(error);
+          //this.error = true;
+        }
+        try{
+          con=await this.getUsersFromDB()
+        }catch (error){
+          console.log(error)
+        }
+      }
+
+    },
+    async editUser(index){
+      if(this.secureNotEmptyFields()){
+        try{
+          let continuar=false
+          let response,name, email, password, passwordRepeat, isPasswordChange, id
           name=this.userFormModel[0]
           email=this.userFormModel[1]
           password=this.userFormModel[2]
           passwordRepeat=this.userFormModel[3]
-          hasUserAdminRole=this.userFormModelRole
-
-          response=await ApiUtils.makeAuthrorizePost("/auth/createUser", {
-            hasUserAdminRole,
-            email,
-            password,
-            passwordRepeat,
-            name
-          });
-          console.log(response)
-          if(response==201){
-            console.log("Insertado correctamente")
-            this.addUserFormVision=false
-          }
-        }else{
-          alert('Las contraseñas no coinciden o tienen menos de 4 caracteres.')
-        }
-      } catch (error) {
-        console.log(error);
-        //this.error = true;
-      }
-      try{
-        con=await this.getUsersFromDB()
-      }catch (error){
-        console.log(error)
-      }
-    },
-    async editUser(index){
-      try{
-        let continuar=false
-        let response,name, email, password, passwordRepeat, isPasswordChange, id
-        name=this.userFormModel[0]
-        email=this.userFormModel[1]
-        password=this.userFormModel[2]
-        passwordRepeat=this.userFormModel[3]
-        isPasswordChange=this.editingPassword
-        id=this.dbRows[index].id
-        console.log(id)
-        if(!this.editingPassword){
-          continuar=true
-        }else{
-          if((this.userFormModel[2].length>3)&&(this.userFormModel[2]==this.userFormModel[3])){
+          isPasswordChange=this.editingPassword
+          id=this.dbRows[index].id
+          console.log(id)
+          if(!this.editingPassword){
             continuar=true
           }else{
-            alert('Las contraseñas no coinciden o tienen menos de 4 caracteres.')
-            continuar=false
+            if((this.userFormModel[2].length>3)&&(this.userFormModel[2]==this.userFormModel[3])){
+              continuar=true
+            }else{
+              alert('Las contraseñas no coinciden o tienen menos de 4 caracteres.')
+              continuar=false
+            }
           }
-        }
-        if (continuar){
-          console.log({
-            id,
-            isPasswordChange,
-            email,
-            password,
-            passwordRepeat,
-            name
-          })
-          response=await ApiUtils.makeAuthrorizePost("/auth/updateUser", {
-            id,
-            isPasswordChange,
-            email,
-            password,
-            passwordRepeat,
-            name
-          });
-          console.log(response)
-          if(response==200){
-            console.log("Modificado correctamente")
-            this.setTriggersToFalse()
+          if (continuar){
+            console.log({
+              id,
+              isPasswordChange,
+              email,
+              password,
+              passwordRepeat,
+              name
+            })
+            response=await ApiUtils.makeAuthrorizePost("/auth/updateUser", {
+              id,
+              isPasswordChange,
+              email,
+              password,
+              passwordRepeat,
+              name
+            });
+            console.log(response)
+            if(response==200){
+              console.log("Modificado correctamente")
+              this.setTriggersToFalse()
+            }
           }
+        }catch(error){
+          console.log(error)
         }
-      }catch(error){
-        console.log(error)
-      }
-      try{
-        const con=await this.getUsersFromDB()
-      }catch (error){
-        console.log(error)
+        try{
+          const con=await this.getUsersFromDB()
+        }catch (error){
+          console.log(error)
+        }
       }
 
     },

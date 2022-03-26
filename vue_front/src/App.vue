@@ -38,6 +38,7 @@
             required
             placeholder="Password"
           >
+        <label class="form-label color-red" v-show="error==true">Sesión incorrecta.</label>
           <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="login" v-show="userLoged==null">
             <span class="glyphicon glyphicon-user" aria-hidden="true"> Entrar</span>
           </button>
@@ -81,7 +82,8 @@ export default {
     usernameForm: "",
     passwordForm: "",
     userLoged: null,
-    userAdmin:false
+    userAdmin:false,
+    error:false
   }),
   methods: {
     async login(){
@@ -98,7 +100,7 @@ export default {
             }),
           })
         ).json()
-        if(token ==undefined){
+        if(token.toString() ==undefined){
           console.log('Login mal')
         }
         TokenUtils.saveToken(token.jwt);
@@ -107,6 +109,7 @@ export default {
         this.userLoged=this.usernameForm
         const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
         this.show=false
+        this.error=false
         if(resAdmin=="true"){
           this.userAdmin=true
           this.goToAdministrator()
@@ -150,6 +153,7 @@ export default {
   }, async mounted(){
     if (TokenUtils.getToken()!==null){
       try{
+        this.error=false
         const res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
         this.userLoged=res
         const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
@@ -277,5 +281,8 @@ li a{
   font-family: newFont;
   font-size: 22px;
   text-decoration: none;
+}
+.color-red {
+  color: #e50303;
 }
 </style>
