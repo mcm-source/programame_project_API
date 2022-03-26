@@ -21,7 +21,7 @@ public class UserData implements UserDetailsService {
         try{
         AuthenticationRequest user= userRepository.findByUsername(username);
 
-            return new User(user.getUsername(), "{noop}"+user.getPassword(), new ArrayList<>());
+            return new User(user.getUsername(), user.getPassword(), new ArrayList<>());
         } catch (Exception e) {
             return new User("root", "{noop}sdda`skfilkoñwejnil3herjlknwajlkdn", new ArrayList<>());
         }

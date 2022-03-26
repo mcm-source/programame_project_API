@@ -4,6 +4,7 @@ package com.example.programame_project_api.controller.teamController;
 import com.example.programame_project_api.entities.AuthenticationRequest;
 import com.example.programame_project_api.entities.AuthenticationResponse;
 import com.example.programame_project_api.entities.IssueReport;
+import com.example.programame_project_api.entities.UserRole;
 import com.example.programame_project_api.repositories.UserRepository;
 import com.example.programame_project_api.security.JWTUtil;
 import com.example.programame_project_api.services.UserData;
@@ -17,6 +18,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,19 +44,23 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
-            AuthenticationRequest bloqueado= userRepository.findByUsername(request.getUsername());
 
-//            Esto manda a validar el usuario introducido
+          //  AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"), UserRole.ADMINISTRATOR);
+
+         //   userRepository.save(user);
+
                 UsernamePasswordAuthenticationToken UsuarioConPass = new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword());
                 authenticationManager.authenticate(UsuarioConPass);
 
-//            Esto vale para entrar despues con el usuario
                 HttpHeaders headers = new HttpHeaders();
                 headers.setContentType(MediaType.APPLICATION_JSON);
                 UserDetails userDetails = userData.loadUserByUsername(request.getUsername());

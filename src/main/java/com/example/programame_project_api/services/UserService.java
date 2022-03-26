@@ -9,6 +9,7 @@ import com.example.programame_project_api.servicesTools.ServicesTools;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -23,6 +24,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private TeacherRepository teacherRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     public ResponseEntity createUser(Map<String, Object> user, String token) {
@@ -155,7 +158,7 @@ public class UserService {
 
         AuthenticationRequest userData = new AuthenticationRequest(
                 (String) user.get("email"),
-                (String) user.get("password"),
+                passwordEncoder.encode((String) user.get("password")),
                 UserRole.COMMONUSER);
 
         Teacher teacher = new Teacher(
@@ -188,6 +191,7 @@ public class UserService {
 
 
     private void doUpdateOfDataUserWithPassword(Map<String, Object> user) {
+
         Teacher teacher = teacherRepository.findById((int) user.get("id"));
         updatePassword((String) user.get("password"), teacher.getEmail());
         updateUsername((String) user.get("email"), teacher.getEmail());
@@ -202,6 +206,7 @@ public class UserService {
     }
 
     private boolean isPasswordDataOk(Map<String, Object> user) {
+
         if (user.get("password").equals(user.get("passwordRepeat"))) {
             return true;
         } else {
@@ -233,24 +238,17 @@ public class UserService {
     private void updatePassword(String password, String oldUsername) {
 
         AuthenticationRequest userData = userRepository.findByUsername(oldUsername);
-        userData.setPassword(password);
+        userData.setPassword( passwordEncoder.encode(password));
         userRepository.save(userData);
 
-    }
-
-    private void updateUsernameAndPassword(String username, String password, String oldUsername){
-        AuthenticationRequest userData = userRepository.findByUsername(oldUsername);
-        userData.setUsername(username);
-        userData.setPassword(password);
-        userRepository.save(userData);
     }
 
     private ResponseEntity createUserWithAdminRole(Map<String, Object> user) {
 
         AuthenticationRequest userData = new AuthenticationRequest(
                 (String) user.get("email"),
-                (String) user.get("password"),
-                UserRole.ADMINISTRATOR);
+                passwordEncoder.encode((String) user.get("password")),
+                UserRole.COMMONUSER);
         userRepository.save(userData);
         return new ResponseEntity(HttpStatus.CREATED);
 
