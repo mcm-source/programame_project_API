@@ -139,6 +139,23 @@ public class UserService {
         }
     }
 
+    public ResponseEntity getNameUserFromToken(String token) {
+
+        try {
+
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(servicesTools.extractEmailFromToken(token));
+
+        } catch (Exception e) {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+
+
+    }
+
 
     private boolean isUserDataOk(Map<String, Object> user) {
 
@@ -238,7 +255,7 @@ public class UserService {
     private void updatePassword(String password, String oldUsername) {
 
         AuthenticationRequest userData = userRepository.findByUsername(oldUsername);
-        userData.setPassword( passwordEncoder.encode(password));
+        userData.setPassword(passwordEncoder.encode(password));
         userRepository.save(userData);
 
     }

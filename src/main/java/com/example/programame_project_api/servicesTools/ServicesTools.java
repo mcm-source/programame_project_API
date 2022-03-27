@@ -32,10 +32,9 @@ public class ServicesTools {
 
     public String extractEmailFromToken(String token) {
 
-        System.out.println(token);
+
         String dato = token;
         dato = dato.replace("Bearer ", "");
-        System.out.println(dato);
         return jwtUtil.extractUsername(dato);
 
 

@@ -52,7 +52,8 @@ public class AuthController {
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
 
-//            AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"), UserRole.ADMINISTRATOR);
+//            AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"),
+//            UserRole.ADMINISTRATOR);
 //
 //            userRepository.save(user);
 
@@ -105,6 +106,15 @@ public class AuthController {
     public ResponseEntity isUserAdmin(@RequestHeader(name = "Authorization") String token) {
 
         return userService.isUserAdmin(token);
+
+    }
+
+
+    @CrossOrigin(origins = {"https://localhost:8080"})
+    @GetMapping("/getUserNameFromToken")
+    public ResponseEntity getUserNameFromToken(@RequestHeader(name = "Authorization") String token) {
+
+        return userService.getNameUserFromToken(token);
 
     }
 
