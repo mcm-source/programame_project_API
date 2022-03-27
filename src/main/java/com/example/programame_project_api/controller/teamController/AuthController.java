@@ -47,7 +47,7 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080"})
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
@@ -72,7 +72,7 @@ public class AuthController {
         }
 
     }
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080"})
     @PostMapping("/createUser")
     public ResponseEntity newUser(@RequestBody Map<String, Object> user,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -81,7 +81,7 @@ public class AuthController {
 
 
     }
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080"})
     @PostMapping("/updateUser")
     public ResponseEntity updateUser(@RequestBody Map<String, Object> user,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -91,7 +91,7 @@ public class AuthController {
 
     }
 
-    @CrossOrigin(origins = {"http://localhost:3001","http://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080"})
     @DeleteMapping("/deleteUser")
     public ResponseEntity deleteUser(@RequestBody String email,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -100,7 +100,7 @@ public class AuthController {
        return  userService.deleteUser(email, token);
     }
 
-    @CrossOrigin(origins = {"http://localhost:3001", "http://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080"})
     @GetMapping("/isUserAdmin")
     public ResponseEntity isUserAdmin(@RequestHeader(name = "Authorization") String token) {
 
