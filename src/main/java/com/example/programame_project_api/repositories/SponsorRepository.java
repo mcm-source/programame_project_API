@@ -1,8 +1,8 @@
 package com.example.programame_project_api.repositories;
 
-import com.example.programame_project_api.entities.ComplexDonation;
-import com.example.programame_project_api.entities.SimpleDonation;
-import com.example.programame_project_api.entities.Sponsor;
+import com.example.programame_project_api.entities.persistEntities.ComplexDonation;
+import com.example.programame_project_api.entities.persistEntities.SimpleDonation;
+import com.example.programame_project_api.entities.persistEntities.Sponsor;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

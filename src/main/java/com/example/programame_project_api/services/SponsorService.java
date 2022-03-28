@@ -1,6 +1,6 @@
 package com.example.programame_project_api.services;
 
-import com.example.programame_project_api.entities.*;
+import com.example.programame_project_api.entities.persistEntities.*;
 import com.example.programame_project_api.repositories.*;
 import com.example.programame_project_api.security.JWTUtil;
 import com.example.programame_project_api.servicesTools.ServicesTools;

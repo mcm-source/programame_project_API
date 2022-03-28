@@ -1,11 +1,10 @@
 package com.example.programame_project_api.servicesTools;
 
-import com.example.programame_project_api.entities.AuthenticationRequest;
+import com.example.programame_project_api.entities.persistEntities.AuthenticationRequest;
 import com.example.programame_project_api.entities.UserRole;
 import com.example.programame_project_api.repositories.TeamRepository;
 import com.example.programame_project_api.repositories.UserRepository;
 import com.example.programame_project_api.security.JWTUtil;
-import com.example.programame_project_api.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

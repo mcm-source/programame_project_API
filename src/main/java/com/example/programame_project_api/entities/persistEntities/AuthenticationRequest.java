@@ -1,4 +1,6 @@
-package com.example.programame_project_api.entities;
+package com.example.programame_project_api.entities.persistEntities;
+
+import com.example.programame_project_api.entities.UserRole;
 
 import javax.persistence.*;
 

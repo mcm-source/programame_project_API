@@ -1,7 +1,5 @@
 package com.example.programame_project_api.controller.teamController;
 
-import com.example.programame_project_api.entities.IssueReport;
-import com.example.programame_project_api.entities.Team;
 import com.example.programame_project_api.services.TeamService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +16,7 @@ public class TeamController {
 
     @CrossOrigin(origins = {"https://localhost:8080"})
     @PostMapping("/createTeam")
-    public ResponseEntity<IssueReport> newTeam(@RequestBody Map<String, Object> teamData,
+    public ResponseEntity newTeam(@RequestBody Map<String, Object> teamData,
                                                @RequestHeader(name = "Authorization") String token) {
 
         return teamService.saveTeam(teamData, token);
@@ -52,6 +50,14 @@ public class TeamController {
                                                       @RequestHeader(name = "Authorization") String token) {
 
         return teamService.getDataOfTeamByIdOfTeacher(id, token);
+
+    }
+
+    @CrossOrigin(origins = {"https://localhost:8080"})
+    @GetMapping("/sponsorsdata/{teamName}")
+    public ResponseEntity getSponsorDataFromTeam(@PathVariable("teamName") String teamName) {
+
+        return teamService.getSponsorsDataOfTeam(teamName);
 
     }
 

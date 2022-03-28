@@ -1,7 +1,7 @@
 package com.example.programame_project_api.repositories;
 
 
-import com.example.programame_project_api.entities.AuthenticationRequest;
+import com.example.programame_project_api.entities.persistEntities.AuthenticationRequest;
 import org.springframework.data.repository.CrudRepository;
 
 public interface UserRepository extends CrudRepository<AuthenticationRequest, Long> {

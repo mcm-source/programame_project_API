@@ -1,6 +1,7 @@
 package com.example.programame_project_api.services;
 
-import com.example.programame_project_api.entities.*;
+import com.example.programame_project_api.entities.persistEntities.*;
+import com.example.programame_project_api.entities.responseEntities.ContainerOverallTable;
 import com.example.programame_project_api.repositories.SponsorRepository;
 import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.TeamRepository;

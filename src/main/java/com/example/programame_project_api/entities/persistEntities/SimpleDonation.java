@@ -1,10 +1,6 @@
-package com.example.programame_project_api.entities;
-
-import com.example.programame_project_api.ProgramameProjectApiApplication;
+package com.example.programame_project_api.entities.persistEntities;
 
 import javax.persistence.*;
-
-import static com.example.programame_project_api.ProgramameProjectApiApplication.*;
 
 
 @Entity

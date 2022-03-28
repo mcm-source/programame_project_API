@@ -1,6 +1,6 @@
 package com.example.programame_project_api.repositories;
 
-import com.example.programame_project_api.entities.Team;
+import com.example.programame_project_api.entities.persistEntities.Team;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

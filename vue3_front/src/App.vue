@@ -153,7 +153,7 @@ export default {
     if (TokenUtils.getToken()!==null){
       try{
         this.error=false
-        const res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
+        const res = await ApiUtils.makeAuthrorizeGetDataSimple("/auth/getUserNameFromToken")
         this.userLoged=res
         const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
         if(resAdmin=="true"){

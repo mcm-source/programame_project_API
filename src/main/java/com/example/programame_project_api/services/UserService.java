@@ -1,7 +1,7 @@
 package com.example.programame_project_api.services;
 
-import com.example.programame_project_api.entities.AuthenticationRequest;
-import com.example.programame_project_api.entities.Teacher;
+import com.example.programame_project_api.entities.persistEntities.AuthenticationRequest;
+import com.example.programame_project_api.entities.persistEntities.Teacher;
 import com.example.programame_project_api.entities.UserRole;
 import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.UserRepository;

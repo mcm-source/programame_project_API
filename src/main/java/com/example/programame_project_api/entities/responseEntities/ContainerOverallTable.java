@@ -1,5 +1,7 @@
-package com.example.programame_project_api.entities;
+package com.example.programame_project_api.entities.responseEntities;
 
+import com.example.programame_project_api.entities.persistEntities.SimpleDonation;
+import com.example.programame_project_api.entities.persistEntities.ComplexDonation;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -9,8 +11,8 @@ public class ContainerOverallTable {
     private String teamName;
     private  String schoolName;
     private  String sponsorName;
-    private  SimpleDonation simpleDonation;
-    private  ComplexDonation complexDonation;
+    private SimpleDonation simpleDonation;
+    private ComplexDonation complexDonation;
 
 
     public ContainerOverallTable() {

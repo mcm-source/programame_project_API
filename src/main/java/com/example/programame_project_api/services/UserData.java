@@ -1,7 +1,7 @@
 package com.example.programame_project_api.services;
 
 
-import com.example.programame_project_api.entities.AuthenticationRequest;
+import com.example.programame_project_api.entities.persistEntities.AuthenticationRequest;
 import com.example.programame_project_api.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;

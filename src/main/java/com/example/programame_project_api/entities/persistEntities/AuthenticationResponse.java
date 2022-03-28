@@ -1,4 +1,4 @@
-package com.example.programame_project_api.entities;
+package com.example.programame_project_api.entities.persistEntities;
 
 public class AuthenticationResponse {
 

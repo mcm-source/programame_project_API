@@ -1,8 +1,12 @@
 package com.example.programame_project_api.services;
 
-import com.example.programame_project_api.entities.Sponsor;
-import com.example.programame_project_api.entities.Teacher;
-import com.example.programame_project_api.entities.Team;
+import com.example.programame_project_api.entities.persistEntities.Sponsor;
+import com.example.programame_project_api.entities.persistEntities.Teacher;
+import com.example.programame_project_api.entities.persistEntities.Team;
+import com.example.programame_project_api.entities.responseEntities.ComplexDonationData;
+import com.example.programame_project_api.entities.responseEntities.SimpleDonationData;
+import com.example.programame_project_api.entities.responseEntities.SponsorData;
+import com.example.programame_project_api.entities.responseEntities.TeamSponsorData;
 import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.TeamRepository;
 import com.example.programame_project_api.repositories.UserRepository;
@@ -13,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -153,9 +158,9 @@ public class TeamService {
                     team.setTeacher(null);
                     team.getListSponsors().forEach(sponsor -> {
                         sponsor.setTeam(null);
-                        if(sponsor.getSimpleDonation()!=null){
+                        if (sponsor.getSimpleDonation() != null) {
                             sponsor.getSimpleDonation().setSponsor(null);
-                        }else if(sponsor.getComplexDonation()!=null){
+                        } else if (sponsor.getComplexDonation() != null) {
                             sponsor.getComplexDonation().setSponsor(null);
                         }
                     });
@@ -165,9 +170,7 @@ public class TeamService {
                         .status(HttpStatus.OK)
                         .body(listTeams);
             } else {
-                return servicesTools.createResponseEntity(
-                        HttpStatus.FORBIDDEN,
-                        "User doesn´t have permissions");
+                return servicesTools.createResponseEntity(HttpStatus.FORBIDDEN, "User doesn´t have permissions");
             }
         } catch (Exception e) {
             return servicesTools.createResponseEntity(
@@ -176,6 +179,50 @@ public class TeamService {
         }
 
 
+    }
+
+
+    public ResponseEntity getSponsorsDataOfTeam(String teamName) {
+
+        try {
+            if (teamRepository.existsByName(teamName)) {
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(createListOfSponsonsData(teamName));
+            } else {
+                return servicesTools.createResponseEntity(HttpStatus.FORBIDDEN, "Team doesn´t exist");
+            }
+        } catch (
+                Exception e) {
+            return servicesTools.createResponseEntity(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.getMessage());
+        }
+
+
+    }
+
+
+    private TeamSponsorData createListOfSponsonsData(String teamName) {
+
+        Team team = teamRepository.findByName(teamName);
+        List<SponsorData> sponsorDataList = new ArrayList<>();
+
+        team.getListSponsors().forEach(sponsor -> {
+            if (sponsor.getSimpleDonation() != null) {
+                sponsorDataList.add(new SponsorData(sponsor.getName(),
+                        new SimpleDonationData(sponsor.getSimpleDonation().getAmount())));
+            } else if (sponsor.getComplexDonation() != null) {
+                sponsorDataList.add(new SponsorData(sponsor.getName(),
+                        new ComplexDonationData(sponsor.getComplexDonation().getAmountForSimpleProblem(),
+                                sponsor.getComplexDonation().getAmountForMediumProblem(),
+                                sponsor.getComplexDonation().getAmountForHardProblem())));
+            }
+
+
+        });
+
+        return new TeamSponsorData(team.getName(), sponsorDataList);
     }
 
 

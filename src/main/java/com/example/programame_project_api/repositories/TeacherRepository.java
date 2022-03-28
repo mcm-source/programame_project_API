@@ -1,7 +1,6 @@
 package com.example.programame_project_api.repositories;
 
-import com.example.programame_project_api.entities.AuthenticationRequest;
-import com.example.programame_project_api.entities.Teacher;
+import com.example.programame_project_api.entities.persistEntities.Teacher;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
