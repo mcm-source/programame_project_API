@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCors;
+
 @Controller
 @RequestMapping("/auth")
 public class AuthController {
@@ -45,7 +47,7 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @CrossOrigin(origins = {"https://localhost:8080","http://localhost:8093"})
+    @CrossOrigin(origins = {URLCors})
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
@@ -73,7 +75,7 @@ public class AuthController {
         }
 
     }
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @PostMapping("/createUser")
     public ResponseEntity newUser(@RequestBody Map<String, Object> user,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -82,7 +84,7 @@ public class AuthController {
 
 
     }
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @PostMapping("/updateUser")
     public ResponseEntity updateUser(@RequestBody Map<String, Object> user,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -92,7 +94,7 @@ public class AuthController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @DeleteMapping("/deleteUser")
     public ResponseEntity deleteUser(@RequestBody String email,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -101,7 +103,7 @@ public class AuthController {
        return  userService.deleteUser(email, token);
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @GetMapping("/isUserAdmin")
     public ResponseEntity isUserAdmin(@RequestHeader(name = "Authorization") String token) {
 
@@ -110,7 +112,7 @@ public class AuthController {
     }
 
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @GetMapping("/getUserNameFromToken")
     public ResponseEntity getUserNameFromToken(@RequestHeader(name = "Authorization") String token) {
 

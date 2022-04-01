@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCors;
+
 @RestController
 @RequestMapping("/team")
 public class TeamController {
@@ -14,7 +16,7 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @PostMapping("/createTeam")
     public ResponseEntity newTeam(@RequestBody Map<String, Object> teamData,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -24,7 +26,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @PostMapping("/updateTeam")
     public ResponseEntity updateTeam(@RequestBody Map<String, Object> teamData,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -34,7 +36,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @DeleteMapping("/deleteTeam/{id}")
     public ResponseEntity deleteTeam(@PathVariable("id") int id,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -44,7 +46,7 @@ public class TeamController {
     }
 
 
-    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
+    @CrossOrigin(origins = {URLCors})
     @GetMapping("/getTeamData/{id}")
     public ResponseEntity listTeacherDataForAdminUser(@PathVariable("id") int id,
                                                       @RequestHeader(name = "Authorization") String token) {
@@ -53,7 +55,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {URLCors})
     @GetMapping("/sponsorsdata/{teamName}")
     public ResponseEntity getSponsorDataFromTeam(@PathVariable("teamName") String teamName) {
 
