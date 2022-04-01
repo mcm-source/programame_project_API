@@ -1,6 +1,7 @@
 package com.example.programame_project_api.controller.teamController;
 
 
+import com.example.programame_project_api.entities.UserRole;
 import com.example.programame_project_api.entities.persistEntities.AuthenticationRequest;
 import com.example.programame_project_api.entities.persistEntities.AuthenticationResponse;
 import com.example.programame_project_api.repositories.UserRepository;
@@ -44,15 +45,17 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","http://localhost:8093"})
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
 
-//            AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"),
-//            UserRole.ADMINISTRATOR);
-//
-//            userRepository.save(user);
+            if(!userRepository.existsByUsername("test1234")){
+                AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"),
+                        UserRole.ADMINISTRATOR);
+
+                userRepository.save(user);
+            }
 
                 UsernamePasswordAuthenticationToken UsuarioConPass = new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -70,7 +73,7 @@ public class AuthController {
         }
 
     }
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @PostMapping("/createUser")
     public ResponseEntity newUser(@RequestBody Map<String, Object> user,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -79,7 +82,7 @@ public class AuthController {
 
 
     }
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @PostMapping("/updateUser")
     public ResponseEntity updateUser(@RequestBody Map<String, Object> user,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -89,7 +92,7 @@ public class AuthController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @DeleteMapping("/deleteUser")
     public ResponseEntity deleteUser(@RequestBody String email,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -98,7 +101,7 @@ public class AuthController {
        return  userService.deleteUser(email, token);
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @GetMapping("/isUserAdmin")
     public ResponseEntity isUserAdmin(@RequestHeader(name = "Authorization") String token) {
 
@@ -107,7 +110,7 @@ public class AuthController {
     }
 
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @GetMapping("/getUserNameFromToken")
     public ResponseEntity getUserNameFromToken(@RequestHeader(name = "Authorization") String token) {
 

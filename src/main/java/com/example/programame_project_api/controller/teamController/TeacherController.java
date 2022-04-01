@@ -28,7 +28,7 @@ public class TeacherController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @GetMapping("/listTeacherData")
     public ResponseEntity listTeachersDataForAdminUser(@RequestHeader(name="Authorization") String token) {
 
@@ -36,7 +36,7 @@ public class TeacherController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @GetMapping("/getTeacherName")
     public ResponseEntity getTeacherNameFromToken(@RequestHeader(name="Authorization") String token) {
 
@@ -45,7 +45,7 @@ public class TeacherController {
     }
 
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @GetMapping("/getTeacherNameWithId/{id}")
     public ResponseEntity getTeacherNameFromId(@PathVariable("id") int id,
                                                       @RequestHeader(name = "Authorization") String token) {

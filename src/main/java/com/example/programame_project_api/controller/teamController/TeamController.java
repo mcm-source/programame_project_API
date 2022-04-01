@@ -14,7 +14,7 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @PostMapping("/createTeam")
     public ResponseEntity newTeam(@RequestBody Map<String, Object> teamData,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -24,7 +24,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @PostMapping("/updateTeam")
     public ResponseEntity updateTeam(@RequestBody Map<String, Object> teamData,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -34,7 +34,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @DeleteMapping("/deleteTeam/{id}")
     public ResponseEntity deleteTeam(@PathVariable("id") int id,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -44,7 +44,7 @@ public class TeamController {
     }
 
 
-    @CrossOrigin(origins = {"https://localhost:8080"})
+    @CrossOrigin(origins = {"https://localhost:8080","https://localhost:8092"})
     @GetMapping("/getTeamData/{id}")
     public ResponseEntity listTeacherDataForAdminUser(@PathVariable("id") int id,
                                                       @RequestHeader(name = "Authorization") String token) {

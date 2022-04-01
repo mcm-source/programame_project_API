@@ -4,7 +4,7 @@ import { TokenUtils } from "./TokenUtils";
 export class ApiUtils {
   static DOMAIN_REMOTE="http://3.232.204.125:8086";
   static DOMAIN_URL = "http://localhost:8096";
-  static DOMAIN_URL_IN_USE="https://localhost:8096";
+  static DOMAIN_URL_IN_USE="https://3.232.204.125:8092";
 
   /*
   static makePost(endPoint, object) {
