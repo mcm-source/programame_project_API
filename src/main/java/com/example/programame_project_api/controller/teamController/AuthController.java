@@ -1,7 +1,6 @@
 package com.example.programame_project_api.controller.teamController;
 
 
-import com.example.programame_project_api.entities.UserRole;
 import com.example.programame_project_api.entities.persistEntities.AuthenticationRequest;
 import com.example.programame_project_api.entities.persistEntities.AuthenticationResponse;
 import com.example.programame_project_api.repositories.UserRepository;
@@ -23,7 +22,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCors;
+import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCORS;
+
 
 @Controller
 @RequestMapping("/auth")
@@ -47,17 +47,13 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @CrossOrigin(origins = {URLCors})
+
+    @CrossOrigin(origins = URLCORS)
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> createToken(@RequestBody AuthenticationRequest request){
         try {
 
-            if(!userRepository.existsByUsername("test1234")){
-                AuthenticationRequest user = new AuthenticationRequest("test1234",passwordEncoder.encode("1234"),
-                        UserRole.ADMINISTRATOR);
-
-                userRepository.save(user);
-            }
+            userService.createFirstUser();
 
                 UsernamePasswordAuthenticationToken UsuarioConPass = new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -75,7 +71,7 @@ public class AuthController {
         }
 
     }
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @PostMapping("/createUser")
     public ResponseEntity newUser(@RequestBody Map<String, Object> user,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -84,7 +80,7 @@ public class AuthController {
 
 
     }
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @PostMapping("/updateUser")
     public ResponseEntity updateUser(@RequestBody Map<String, Object> user,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -94,7 +90,7 @@ public class AuthController {
 
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @DeleteMapping("/deleteUser")
     public ResponseEntity deleteUser(@RequestBody String email,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -103,7 +99,7 @@ public class AuthController {
        return  userService.deleteUser(email, token);
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @GetMapping("/isUserAdmin")
     public ResponseEntity isUserAdmin(@RequestHeader(name = "Authorization") String token) {
 
@@ -112,7 +108,7 @@ public class AuthController {
     }
 
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @GetMapping("/getUserNameFromToken")
     public ResponseEntity getUserNameFromToken(@RequestHeader(name = "Authorization") String token) {
 

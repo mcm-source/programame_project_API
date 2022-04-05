@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -170,6 +171,32 @@ public class UserService {
         return user.getUserRole() == UserRole.ADMINISTRATOR;
 
     }
+
+
+    public void createFirstUser() {
+
+        if (!existSomeUserAdmin(userRepository.findAll())) {
+            if (!userRepository.existsByUsername("test1234")) {
+                AuthenticationRequest user = new AuthenticationRequest("test1234",
+                        passwordEncoder.encode("1234"),
+                        UserRole.ADMINISTRATOR);
+
+                userRepository.save(user);
+
+            }
+        }
+    }
+
+    private boolean existSomeUserAdmin(List<AuthenticationRequest> listUsers) {
+        for (AuthenticationRequest user : listUsers) {
+            if (user.getUserRole() == UserRole.ADMINISTRATOR)
+                return true;
+        }
+        return false;
+
+
+    }
+
 
     private ResponseEntity createUserAndTeacher(Map<String, Object> user) {
 

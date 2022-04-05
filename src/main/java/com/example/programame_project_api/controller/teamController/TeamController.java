@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCors;
+import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCORS;
 
 @RestController
 @RequestMapping("/team")
@@ -16,7 +16,7 @@ public class TeamController {
     @Autowired
     private TeamService teamService;
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @PostMapping("/createTeam")
     public ResponseEntity newTeam(@RequestBody Map<String, Object> teamData,
                                                @RequestHeader(name = "Authorization") String token) {
@@ -26,7 +26,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @PostMapping("/updateTeam")
     public ResponseEntity updateTeam(@RequestBody Map<String, Object> teamData,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -36,7 +36,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @DeleteMapping("/deleteTeam/{id}")
     public ResponseEntity deleteTeam(@PathVariable("id") int id,
                                      @RequestHeader(name = "Authorization") String token) {
@@ -46,7 +46,7 @@ public class TeamController {
     }
 
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @GetMapping("/getTeamData/{id}")
     public ResponseEntity listTeacherDataForAdminUser(@PathVariable("id") int id,
                                                       @RequestHeader(name = "Authorization") String token) {
@@ -55,7 +55,7 @@ public class TeamController {
 
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @GetMapping("/sponsorsdata/{teamName}")
     public ResponseEntity getSponsorDataFromTeam(@PathVariable("teamName") String teamName) {
 

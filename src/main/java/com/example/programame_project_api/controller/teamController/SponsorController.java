@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCors;
+import static com.example.programame_project_api.ProgramameProjectApiApplication.URLCORS;
 
 @RestController
 @RequestMapping("/sponsor")
@@ -16,7 +16,7 @@ public class SponsorController {
     @Autowired
     private SponsorService sponsorService;
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @PostMapping("/createSponsor")
     public ResponseEntity newSponsor(@RequestBody Map<String, Object> SponsorData,
                                                   @RequestHeader (name="Authorization") String token) {
@@ -26,7 +26,7 @@ public class SponsorController {
 
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @PostMapping("/updateSponsor")
     public ResponseEntity updateSponsor(@RequestBody Map<String, Object> SponsorData,
                                         @RequestHeader (name="Authorization") String token) {
@@ -36,7 +36,7 @@ public class SponsorController {
 
     }
 
-    @CrossOrigin(origins = {URLCors})
+    @CrossOrigin(origins = {URLCORS})
     @DeleteMapping("/deleteSponsor/{id}")
     public ResponseEntity deleteSponsor(@PathVariable("id") int id,
                                         @RequestHeader (name="Authorization") String token) {
