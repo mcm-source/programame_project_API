@@ -150,24 +150,59 @@ export default {
         window.location.reload()});
     },
   }, async mounted(){
-    if (TokenUtils.getToken()!==null){
-      try{
-        this.error=false
-        const res = await ApiUtils.makeAuthrorizeGetDataSimple("/auth/getUserNameFromToken")
-        this.userLoged=res
-        const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
-        if(resAdmin=="true"){
-          this.userAdmin=true
-        }else{
-          this.userAdmin=false
+    if (TokenUtils.getToken()!==null) {
+      let res
+      try {
+        this.error = false
+        res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
+        // console.log(res)
+        if (res.toString().includes("Cannot invoke")) {
+          res = "Loading..."
         }
-      }catch(error){
+        this.userLoged = res
+        const resAdmin = await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+        if (resAdmin == "true") {
+          this.userAdmin = true
+        } else {
+          this.userAdmin = false
+        }
+      } catch (error) {
         console.log(error)
-        this.userLoged=null
-        this.userAdmin=false
+        this.userLoged = null
+        this.userAdmin = false
       }
-
     }
+
+  }, computed:{
+    // async userdata(){
+    //   let res
+    //   if (TokenUtils.getToken()!==null){
+    //
+    //     try{
+    //       this.error=false
+    //       res = await ApiUtils.makeAuthrorizeGetDataSimple("/teacher/getTeacherName")
+    //       console.log(res)
+    //       console.log("updteed")
+    //       if(res.toString().includes("Cannot invoke")){
+    //         res="Loading..."
+    //       }
+    //       this.userLoged=res
+    //       const resAdmin= await ApiUtils.makeAuthrorizeGetDataSimple("/auth/isUserAdmin")
+    //       if(resAdmin=="true"){
+    //         this.userAdmin=true
+    //       }else{
+    //         this.userAdmin=false
+    //       }
+    //     }catch(error){
+    //       console.log(error)
+    //       // this.userLoged=null
+    //       // this.userAdmin=false
+    //       res="Loading..."
+    //     }
+    //
+    //   }
+    //   return res.text()
+    // }
   }
 };
 </script>
