@@ -180,7 +180,6 @@ public class UserService {
                 AuthenticationRequest user = new AuthenticationRequest("test1234",
                         passwordEncoder.encode("1234"),
                         UserRole.ADMINISTRATOR);
-
                 userRepository.save(user);
 
             }
