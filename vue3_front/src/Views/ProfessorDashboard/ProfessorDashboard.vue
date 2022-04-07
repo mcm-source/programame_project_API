@@ -45,11 +45,19 @@
               required
               placeholder="Nombre del Centro"
             >
-            <label class="form-label">Ubicación:</label>
+            <label class="form-label">Provincia:</label>
             <select v-model="comunidad" class="margin_down">
               <option disabled value="">Seleccione un elemento</option>
               <option v-for="ccaa in comunidades">{{ ccaa.nombre }}</option>
             </select>
+            <label class="form-label">Localidad:</label>
+            <input
+                v-model="teamFormModel[3]"
+                class="margin_down"
+                type="text"
+                required
+                placeholder="Localidad"
+            >
 
             <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="createTeam()">
               Añadir Equipo
@@ -103,12 +111,19 @@
                 required
                 placeholder="Nombre del Centro"
               >
-              <label class="form-label">Ubicación:</label>
+              <label class="form-label">Provincia:</label>
               <select v-model="comunidad" class="margin_down">
                 <option disabled value="">Seleccione un elemento</option>
                 <option v-for="ccaa in comunidades">{{ ccaa.nombre }}</option>
               </select>
-
+              <label class="form-label">Localidad:</label>
+              <input
+                  v-model="teamFormModel[3]"
+                  class="margin_down"
+                  type="text"
+                  required
+                  placeholder="Localidad"
+              >
               <button type="button" class="btn btn-default" aria-label="Left Align"
                       v-on:click=updateTeam(index)>
                 Modificar Equipo
@@ -338,7 +353,7 @@ export default {
       radioButtonsCuantia: 0, //0:complexDonation, 1:simpleDonation
       comunidad: '', //Modelo de ubicación
       booleanTriggers: [[false, false, false], [false, false, false]], //editTeam, addSponsor, editSponsor x Team
-      teamFormModel: ["", "", ""], //0: name, 1:teamMembers, 2:schoolName
+      teamFormModel: ["", "", "", ""], //0: name, 1:teamMembers, 2:schoolName, 3: town
       sponsorFormModelName:"",
       sponsorFormModel:[0,0,0,0], //0:amountForSimpleProblem, 1:amountForMediumProblem, 2:amountForHardProblem, 3:amount
       equipos: [],
@@ -363,6 +378,7 @@ export default {
       this.teamFormModel[0] = ""
       this.teamFormModel[1] = ""
       this.teamFormModel[2] = ""
+      this.teamFormModel[3] = ""
       this.comunidad = ""
       this.addTeam = true
     },
@@ -384,6 +400,7 @@ export default {
           this.teamFormModel[0] = this.equipos[index].name
           this.teamFormModel[1] = this.equipos[index].teamMembers
           this.teamFormModel[2] = this.equipos[index].schoolName
+          this.teamFormModel[3] = this.equipos[index].town
           this.comunidad = this.equipos[index].location
         }
         //Si se va a crear sponsor se vacía el modelo
@@ -494,16 +511,18 @@ export default {
       if(this.secureNotEmptyTeamFields()){
         let con
         try {
-          let name, teamMembers, schoolName, location
+          let name, teamMembers, schoolName, location, town
           name=this.teamFormModel[0]
           teamMembers=this.teamFormModel[1]
           schoolName=this.teamFormModel[2]
           location=this.comunidad
+          town=this.teamFormModel[3]
           response=await ApiUtils.makeAuthrorizePost("/team/createTeam", {
             name,
             teamMembers,
             schoolName,
-            location
+            location,
+            town
           });
         } catch (error) {
           console.log(error);
@@ -521,10 +540,11 @@ export default {
       if(this.secureNotEmptyTeamFields()){
         let con
         try {
-          let name, teamMembers, schoolName, location, idTeam
+          let name, teamMembers, schoolName, location, idTeam, town
           name=this.teamFormModel[0]
           teamMembers=this.teamFormModel[1]
           schoolName=this.teamFormModel[2]
+          town=this.teamFormModel[3]
           location=this.comunidad
           idTeam=this.equipos[index].id
           console.log({
@@ -532,7 +552,8 @@ export default {
             name,
             teamMembers,
             schoolName,
-            location
+            location,
+            town
           });
           response=await ApiUtils.makeAuthrorizePost("/team/updateTeam", {
             idTeam,

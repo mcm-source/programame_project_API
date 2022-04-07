@@ -3,7 +3,7 @@
     <div id="barra-superior">
       <ul class="elementos">
         <li>
-          <router-link to="/">Listado General</router-link>
+          <router-link to="/">Listado Programame 2022</router-link>
         </li>
       </ul>
 
