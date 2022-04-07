@@ -560,7 +560,8 @@ export default {
             name,
             teamMembers,
             schoolName,
-            location
+            location,
+            town
           });
         } catch (error) {
           console.log(error);
