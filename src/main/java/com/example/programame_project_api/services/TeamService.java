@@ -72,8 +72,6 @@ public class TeamService {
 
         try {
             if (servicesTools.isUserAdmin(token)) {
-
-                System.out.println("User is admin");
                 return updateTeamWithAdminUser(teamData);
             } else {
                 return updateTeamFromTeacher(teamData, token);
@@ -269,6 +267,7 @@ public class TeamService {
                 (String) teamData.get("teamMembers"),
                 (String) teamData.get("schoolName"),
                 (String) teamData.get("location"),
+                (String) teamData.get("town"),
                 teacher
         );
     }

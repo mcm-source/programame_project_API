@@ -19,7 +19,10 @@ public class Team {
     @Column(nullable = false)
     private String schoolName;
     @Column(nullable = false)
+    private String town;
+    @Column(nullable = false)
     private String location;
+
 
 
 
@@ -37,12 +40,14 @@ public class Team {
                 String teamMembers,
                 String schoolName,
                 String location,
+                String town,
                 Teacher teacher)
                 {
         this.name = name;
         this.teamMembers = teamMembers;
         this.schoolName = schoolName;
         this.location = location;
+        this.town = town;
         this.teacher = teacher;
 
     }
@@ -101,7 +106,11 @@ public class Team {
         this.listSponsors = listSponsors;
     }
 
+    public String getTown() {
+        return town;
+    }
 
-
-
+    public void setTown(String town) {
+        this.town = town;
+    }
 }

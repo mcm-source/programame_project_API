@@ -23,7 +23,8 @@ public interface TeamRepository  extends CrudRepository<Team, Long> {
         teamForUpdate.setName( (String) teamData.get("name"));
         teamForUpdate.setTeamMembers((String) teamData.get("teamMembers"));
         teamForUpdate.setSchoolName((String) teamData.get("schoolName"));
-        teamForUpdate.setLocation( (String) teamData.get("location"));
+        teamForUpdate.setLocation((String) teamData.get("location"));
+        teamForUpdate.setTown((String) teamData.get("town"));
         save(teamForUpdate);
 
     }
