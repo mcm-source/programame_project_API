@@ -46,18 +46,23 @@
               placeholder="Nombre del Centro"
             >
             <label class="form-label">Provincia:</label>
-            <select v-model="comunidad" class="margin_down">
+            <select v-model="comunidad" @change="filtrarMunicipios( comunidad )" class="margin_down">
               <option disabled value="">Seleccione un elemento</option>
               <option v-for="ccaa in comunidades">{{ ccaa.nombre }}</option>
             </select>
             <label class="form-label">Localidad:</label>
-            <input
-                v-model="teamFormModel[3]"
-                class="margin_down"
-                type="text"
-                required
-                placeholder="Localidad"
-            >
+            <select v-model="teamFormModel[3]" class="margin_down">
+              <option disabled value="">Seleccione un elemento</option>
+              <option v-for="loc in selectLocalidades">{{ loc.nm }}</option>
+            </select>
+<!--            <label class="form-label">Localidad:</label>-->
+<!--            <input-->
+<!--                v-model="teamFormModel[3]"-->
+<!--                class="margin_down"-->
+<!--                type="text"-->
+<!--                required-->
+<!--                placeholder="Localidad"-->
+<!--            >-->
 
             <button type="button" class="btn btn-default" aria-label="Left Align" v-on:click="createTeam()">
               Añadir Equipo
@@ -112,18 +117,23 @@
                 placeholder="Nombre del Centro"
               >
               <label class="form-label">Provincia:</label>
-              <select v-model="comunidad" class="margin_down">
+              <select v-model="comunidad" @change="filtrarMunicipios( comunidad )" class="margin_down">
                 <option disabled value="">Seleccione un elemento</option>
                 <option v-for="ccaa in comunidades">{{ ccaa.nombre }}</option>
               </select>
               <label class="form-label">Localidad:</label>
-              <input
-                  v-model="teamFormModel[3]"
-                  class="margin_down"
-                  type="text"
-                  required
-                  placeholder="Localidad"
-              >
+              <select v-model="teamFormModel[3]" class="margin_down">
+                <option disabled value="">Seleccione un elemento</option>
+                <option v-for="loc in selectLocalidades">{{ loc.nm }}</option>
+              </select>
+<!--              <label class="form-label">Localidad:</label>-->
+<!--              <input-->
+<!--                  v-model="teamFormModel[3]"-->
+<!--                  class="margin_down"-->
+<!--                  type="text"-->
+<!--                  required-->
+<!--                  placeholder="Localidad"-->
+<!--              >-->
               <button type="button" class="btn btn-default" aria-label="Left Align"
                       v-on:click=updateTeam(index)>
                 Modificar Equipo
@@ -336,6 +346,7 @@
 import {TokenUtils} from "../../services/TokenUtils";
 import {ApiUtils} from "../../services/ApiUtils";
 import ConfirmDialogue from "../../components/ConfirmDialogue";
+import provincias from "../../logic/provincias.json";
 // import "bootstrap";
 // import "bootstrap/dist/css/bootstrap.min.css"
 
@@ -352,15 +363,36 @@ export default {
       limitedAdminButtons:false,
       radioButtonsCuantia: 0, //0:complexDonation, 1:simpleDonation
       comunidad: '', //Modelo de ubicación
+      localidad: '',
       booleanTriggers: [[false, false, false], [false, false, false]], //editTeam, addSponsor, editSponsor x Team
       teamFormModel: ["", "", "", ""], //0: name, 1:teamMembers, 2:schoolName, 3: town
       sponsorFormModelName:"",
       sponsorFormModel:[0,0,0,0], //0:amountForSimpleProblem, 1:amountForMediumProblem, 2:amountForHardProblem, 3:amount
       equipos: [],
       comunidades: [],
+      localidades: [],
+      selectLocalidades: [],
     }
   },
   methods: {
+    filtrarMunicipios(com){
+      let l, c, idProv
+      idProv=null
+      for(c in this.comunidades){
+        if(this.comunidades.at(c).nombre == com.toString()){
+          idProv=this.comunidades.at(c).provincia_id
+        }
+      }
+      this.selectLocalidades = []
+      this.teamFormModel[3]=""
+      if(idProv != null){
+        for(l in this.localidades){
+          if(this.localidades.at(l).id.toString().startsWith(idProv.toString())){
+            this.selectLocalidades.push(this.localidades.at(l))
+          }
+        }
+      }
+    },
     openNewTeamForm() {
       let x, y
       //Se cierra el resto de formularios que puedan estar abiertos
@@ -381,6 +413,7 @@ export default {
       this.teamFormModel[3] = ""
       this.comunidad = ""
       this.addTeam = true
+      this.selectLocalidades = []
     },
     newFormTriggerChange(index, triggerIndex, sponsorIndex) {
       let x
@@ -400,8 +433,10 @@ export default {
           this.teamFormModel[0] = this.equipos[index].name
           this.teamFormModel[1] = this.equipos[index].teamMembers
           this.teamFormModel[2] = this.equipos[index].schoolName
-          this.teamFormModel[3] = this.equipos[index].town
           this.comunidad = this.equipos[index].location
+          this.filtrarMunicipios(this.equipos[index].location)
+          this.teamFormModel[3] = this.equipos[index].town
+
         }
         //Si se va a crear sponsor se vacía el modelo
         if (triggerIndex == 1) {
@@ -547,14 +582,14 @@ export default {
           town=this.teamFormModel[3]
           location=this.comunidad
           idTeam=this.equipos[index].id
-          console.log({
-            idTeam,
-            name,
-            teamMembers,
-            schoolName,
-            location,
-            town
-          });
+          // console.log({
+          //   idTeam,
+          //   name,
+          //   teamMembers,
+          //   schoolName,
+          //   location,
+          //   town
+          // });
           response=await ApiUtils.makeAuthrorizePost("/team/updateTeam", {
             idTeam,
             name,
@@ -623,15 +658,15 @@ export default {
           amount=this.sponsorFormModel[3].toString()
           if(this.radioButtonsCuantia==0){ //Cuantía compleja
             isSimpleDonation=false
-            console.log({
-                idTeam,
-                name,
-                isSimpleDonation,
-                amountForSimpleProblem,
-                amountForMediumProblem,
-                amountForHardProblem
-              }
-            )
+            // console.log({
+            //     idTeam,
+            //     name,
+            //     isSimpleDonation,
+            //     amountForSimpleProblem,
+            //     amountForMediumProblem,
+            //     amountForHardProblem
+            //   }
+            // )
             response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
               idTeam,
               name,
@@ -642,13 +677,13 @@ export default {
             });
           }else if(this.radioButtonsCuantia==1){ //Cuantía simple
             isSimpleDonation=true
-            console.log({
-                idTeam,
-                name,
-                isSimpleDonation,
-                amount
-              }
-            )
+            // console.log({
+            //     idTeam,
+            //     name,
+            //     isSimpleDonation,
+            //     amount
+            //   }
+            // )
             response=await ApiUtils.makeAuthrorizePost("/sponsor/createSponsor", {
               idTeam,
               name,
@@ -684,16 +719,16 @@ export default {
           idSponsor=this.equipos[index].listSponsors[this.currentSponsorEditing].id
           if(this.radioButtonsCuantia==0){ //Cuantía compleja
             isSimpleDonation=false
-            console.log({
-                idTeam,
-                idSponsor,
-                name,
-                isSimpleDonation,
-                amountForSimpleProblem,
-                amountForMediumProblem,
-                amountForHardProblem
-              }
-            )
+            // console.log({
+            //     idTeam,
+            //     idSponsor,
+            //     name,
+            //     isSimpleDonation,
+            //     amountForSimpleProblem,
+            //     amountForMediumProblem,
+            //     amountForHardProblem
+            //   }
+            // )
             response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
               idTeam,
               idSponsor,
@@ -705,14 +740,14 @@ export default {
             });
           }else if(this.radioButtonsCuantia==1){ //Cuantía simple
             isSimpleDonation=true
-            console.log({
-                idTeam,
-                idSponsor,
-                name,
-                isSimpleDonation,
-                amount
-              }
-            )
+            // console.log({
+            //     idTeam,
+            //     idSponsor,
+            //     name,
+            //     isSimpleDonation,
+            //     amount
+            //   }
+            // )
             response=await ApiUtils.makeAuthrorizePost("/sponsor/updateSponsor", {
               idTeam,
               name,
@@ -796,6 +831,8 @@ export default {
     }
     const provincias=require('../../logic/provincias.json')
     this.comunidades=provincias
+    const local=require('../../logic/localidades.json')
+    this.localidades=local
   }
 };
 </script>
