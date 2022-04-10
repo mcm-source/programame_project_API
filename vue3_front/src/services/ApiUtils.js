@@ -2,9 +2,9 @@
 import { TokenUtils } from "./TokenUtils";
 
 export class ApiUtils {
-  static DOMAIN_REMOTE="http://3.232.204.125:8086";
-  static DOMAIN_URL = "http://localhost:8096";
-  static DOMAIN_URL_IN_USE="http://localhost:8092";
+  static DOMAIN_REMOTE="http://3.232.204.125:8086";  // Esto no se usa para nada, ¿no? Si se usa,
+  static DOMAIN_URL = "http://localhost:8096";       // habría que permitir su configuración externa
+  static DOMAIN_URL_IN_USE=process.env.VUE_APP_SERVER_API_URL || "http://localhost:8092";
 
   /*
   static makePost(endPoint, object) {
