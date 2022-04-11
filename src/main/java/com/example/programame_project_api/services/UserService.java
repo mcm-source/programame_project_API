@@ -7,6 +7,7 @@ import com.example.programame_project_api.repositories.TeacherRepository;
 import com.example.programame_project_api.repositories.UserRepository;
 import com.example.programame_project_api.servicesTools.ServicesTools;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,13 @@ public class UserService {
     private TeacherRepository teacherRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${users.firstadmin.user}")
+    private String firstAdminUser;
+
+    @Value("${users.firstadmin.password}")
+    private String firstAdminPassword;
+
 
     @Transactional
     public ResponseEntity createUser(Map<String, Object> user, String token) {
@@ -174,11 +182,13 @@ public class UserService {
 
 
     public void createFirstUser() {
-
+        // Si estamos en el primer arranque, no hay usuario administrador creado.
+        // Creamos uno con los valores configurados en application.properties
+        // (valores por defecto "test1234" / "1234")
         if (!existSomeUserAdmin(userRepository.findAll())) {
-            if (!userRepository.existsByUsername("test1234")) {
-                AuthenticationRequest user = new AuthenticationRequest("test1234",
-                        passwordEncoder.encode("1234"),
+            if (!userRepository.existsByUsername(firstAdminUser)) { 
+                AuthenticationRequest user = new AuthenticationRequest(firstAdminUser,
+                        passwordEncoder.encode(firstAdminPassword),
                         UserRole.ADMINISTRATOR);
                 userRepository.save(user);
 
