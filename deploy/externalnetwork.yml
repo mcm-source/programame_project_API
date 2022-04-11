@@ -1,0 +1,32 @@
+# Incorpora a la configuración de Docker Compose una red pública externa
+# a la que conecta el frontend y el backend, y configura ambos con
+# nombres de hosts recibidos en variables de entorno.
+#
+# Es útil para conectar la aplicación con un proxy inverso. Se espera que
+# el proxy inverso esté en la red Docker ${EXTERNAL_NETWORK}, y se
+# configure para conectar con ${FRONTEND_CONTAINER_NAME} y ${BACKEND_CONTAINER_NAME}
+# cuando lleguen solicitudes a la URL pública donde se quiere hacer visible
+# la aplicación (http://<servidor>/<ruta> y http://<servidor>/<ruta>/api
+# respectivamente).
+#
+# Tanto el frontend como el backend pasarán a estar en dos redes Docker, la
+# pública añadida aquí y una privada del grupo en la que también estará
+# conectada el contenedor de la base de datos. Eso evita exponer el contenedor
+# de MySQL a la red "pública", y evita además colisiones de nombres.
+
+version: '3.3'
+
+networks:
+    public:
+        external:
+            name: ${EXTERNAL_NETWORK}
+
+services:
+    backend:
+        hostname: ${BACKEND_CONTAINER_NAME}
+        networks:
+            - public
+    frontend:
+        hostname: ${FRONTEND_CONTAINER_NAME}
+        networks:
+            - public

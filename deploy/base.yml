@@ -1,0 +1,60 @@
+# Compose que lanza los contenedores para la aplicación de
+# registro de datos de donaciones para Ucrania en la final
+# online multisitio de 2022.
+#
+# Se lanzan tres contenedores:
+#
+# - backend : aplicación en Java con el backend. Por defecto
+#             escucha en el puerto 8080 del contenedor. Se
+#             espera que un proxy inverso conecte la URL
+#             <URL>/api con él (quitando el /api de la ruta).
+# - frontend : aplicación estática en Vue. Es servida por un
+#              Apache en el puerto 80. Se espera que un proxy
+#              inverso conecte la URL <URL> pública donde será
+#              visible la aplicación.
+# - db : base de datos en MySQL.
+#
+# El lanzamiento se configura a través de múltiples variables
+# de entorno. Consulta env.template para ver ejemplos.
+#
+# Es posible que quieras incorporar a éste alguno de los .yml
+# adicionales del directorio.
+
+version: "3.3"
+
+networks:
+  # Red propia del grupo a la que se conectan todos los contenedores.
+  programameucrania:
+
+
+services:
+  backend:
+    image: programame/ucrania2022/api
+    restart: unless-stopped
+    user: ${UID:-1000}:${GUID:-1000}
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://programame-ucr22-db:3306/${BACKEND_DB_NAME}
+      SPRING_DATASOURCE_USERNAME: ${BACKEND_DB_USER}
+      SPRING_DATASOURCE_PASSWORD: ${BACKEND_DB_PASSWORD}
+      USERS_FIRSTADMIN_USER: ${BACKEND_FIRSTADMIN_USER}
+      USERS_FIRSTADMIN_PASSWORD: ${BACKEND_FIRSTADMIN_PASSWORD}
+      SERVER_PORT: ${BACKEND_INTERNAL_PORT:-8080}
+    networks:
+      - programameucrania
+  frontend:
+    image: programame/ucrania2022/frontend
+    hostname: 'programame-ucr22-front'
+    restart: unless-stopped
+    networks:
+      - programameucrania
+  db:
+    image: mysql
+    restart: unless-stopped
+    hostname: 'programame-ucr22-db'
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${BACKEND_DB_NAME}
+      MYSQL_USER: ${BACKEND_DB_USER}
+      MYSQL_PASSWORD: ${BACKEND_DB_PASSWORD}
+    networks:
+      - programameucrania
